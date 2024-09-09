@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>photo/addfriend.png</file>
+        <file>photo/close.png</file>
+        <file>photo/close2.png</file>
+        <file>photo/main.gif</file>
+        <file>photo/min.png</file>
+        <file>photo/min2.png</file>
+        <file>photo/AHU1.png</file>
+        <file>photo/AHU2.png</file>
+    </qresource>
+</RCC>
