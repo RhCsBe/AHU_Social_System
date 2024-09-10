@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>Login</class>
  <widget class="QWidget" name="Login">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>420</height>
+   </rect>
+  </property>
   <property name="minimumSize">
    <size>
     <width>540</width>
@@ -238,6 +246,26 @@ color:black;
      <string>注册账号</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>82</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>asdff</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>sdfsdf</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QToolButton" name="close_btn">
    <property name="geometry">
@@ -247,6 +275,9 @@ color:black;
      <width>41</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string extracomment="关闭"/>
    </property>
    <property name="styleSheet">
     <string notr="true">QToolButton:hover 
@@ -287,6 +318,9 @@ QToolButton:pressed
      <width>41</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string extracomment="最小化"/>
    </property>
    <property name="styleSheet">
     <string notr="true">QToolButton:hover
