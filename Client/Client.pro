@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,13 +13,17 @@ SOURCES += \
     frienditem.cpp \
     login.cpp \
     main.cpp \
-    maininterface.cpp
+    maininterface.cpp \
+    protocol.cpp \
+    tcpthread.cpp
 
 HEADERS += \
     chatwindow.h \
     frienditem.h \
     login.h \
-    maininterface.h
+    maininterface.h \
+    protocol.h \
+    tcpthread.h
 
 FORMS += \
     chatwindow.ui \

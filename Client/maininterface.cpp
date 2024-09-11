@@ -57,7 +57,7 @@ void MainInterface::mousePressEvent(QMouseEvent* event)
     if(event->button()==Qt::LeftButton)
     {
         pressed=true;
-        press_point=event->pos();
+        pressPoint=event->pos();
     }
 }
 
@@ -73,7 +73,7 @@ void MainInterface::mouseMoveEvent(QMouseEvent* event)
 {
     if(pressed)
     {
-        this->move(event->globalPos()-press_point);
+        this->move(event->globalPos()-pressPoint);
     }
 }
 

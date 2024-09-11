@@ -9,6 +9,7 @@
 #include <QDebug>
 #include "frienditem.h"
 #include "chatwindow.h"
+#include "tcpthread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainInterface; }
@@ -32,6 +33,7 @@ public:
 private:
     Ui::MainInterface *ui;
     bool pressed=false;//鼠标点击信号
-    QPoint press_point;//鼠标点击初始位置
+    QPoint pressPoint;//鼠标点击初始位置
+    TcpThread tcp;
 };
 #endif // MAININTERFACE_H

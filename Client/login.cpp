@@ -8,6 +8,7 @@ Login::Login(QWidget *parent) :
     ui->setupUi(this);
     setStyle();
     setConnect();
+    //qDebug()<<sizeof(FileType);
 }
 
 Login::~Login()
@@ -52,6 +53,16 @@ void Login::setConnect()
 {
     connect(ui->min_btn,&QToolButton::clicked,this,[&](){this->showMinimized();});
     connect(ui->close_btn,&QToolButton::clicked,this,[&](){this->close();});
+    connect(ui->login,&QPushButton::clicked,this,[&](){
+        if(this->matchRegExp())
+        {
+            qDebug()<<"匹配成功";
+        }
+        else
+        {
+            qDebug()<<"匹配失败";
+        }
+    });
 }
 
 void Login::mousePressEvent(QMouseEvent *event)
@@ -61,7 +72,7 @@ void Login::mousePressEvent(QMouseEvent *event)
     {
         //打开按压信号，并记录按压初始位置
         pressed=true;
-        press_point=event->pos();
+        pressPoint=event->pos();
     }
 }
 
@@ -79,8 +90,15 @@ void Login::mouseMoveEvent(QMouseEvent *event)
     //检查按压信号，然后移动对应距离
     if(pressed)
     {
-        move(event->globalPos()- press_point);
+        move(event->globalPos()- pressPoint);
     }
+}
+
+bool Login::matchRegExp()
+{
+    QRegularExpression accountExp("[E|T]\\d{8}");
+    QRegularExpression passwordExp("[A-Z|a-z|0-9]{8,16}");
+    return accountExp.match(ui->account->text()).hasMatch()&&passwordExp.match(ui->password->text()).hasMatch();
 }
 
 

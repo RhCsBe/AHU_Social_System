@@ -53,7 +53,7 @@ void ChatWindow::mousePressEvent(QMouseEvent *event)
         {
             //打开按压信号，并记录按压初始位置
             pressed=true;
-            press_point=event->pos();
+            pressPoint=event->pos();
         }
     }
 }
@@ -72,6 +72,6 @@ void ChatWindow::mouseMoveEvent(QMouseEvent *event)
     //检查按压信号，然后移动对应距离
     if(pressed)
     {
-        move(event->globalPos()- press_point);
+        move(event->globalPos()- pressPoint);
     }
 }

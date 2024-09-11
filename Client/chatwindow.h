@@ -28,7 +28,7 @@ public:
 private:
     Ui::ChatWindow *ui;
     bool pressed=false;//鼠标点击信号
-    QPoint press_point;//鼠标点击初始位置
+    QPoint pressPoint;//鼠标点击初始位置
 };
 
 #endif // CHATWINDOW_H
