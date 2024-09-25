@@ -44,3 +44,11 @@ DEPENDPATH += F:/QTMyWidget/QT5/QT-material-widget/components
 
 RESOURCES += \
     photo.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -LF:/QTMyWidget/QT5/ElaWidgetTools/ -llibelawidgettools.dll
+else:win32:CONFIG(debug, debug|release): LIBS += -LF:/QTMyWidget/QT5/ElaWidgetTools/ -llibelawidgettools.dlld
+else:unix: LIBS += -LF:/QTMyWidget/QT5/ElaWidgetTools/ -llibelawidgettools.dll
+
+INCLUDEPATH += F:/QTMyWidget/QT5/ElaWidgetTools/src/include
+DEPENDPATH += F:/QTMyWidget/QT5/ElaWidgetTools/src/include
+

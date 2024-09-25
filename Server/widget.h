@@ -5,6 +5,7 @@
 #include "tcpthread.h"
 #include "protocol.h"
 #include "sqldata.h"
+#include "workthread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -17,10 +18,23 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
+    void myInformation(QString str);
+
+signals:
+    void inItServer();
 
 private:
     Ui::Widget *ui;
-    TcpThread tcp;
-    SqlData sql;
+
+    //Tcp任务类及Tcp线程
+    TcpThread* tcp;
+    QThread* tcpThread;
+
+    //数据处理任务类及数据处理线程
+    WorkThread* work;
+    QThread* workThread;
+
+    //数据库操作对象
+    //SqlData sql;
 };
 #endif // WIDGET_H

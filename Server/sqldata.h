@@ -10,6 +10,8 @@ class SqlData:public QObject
     Q_OBJECT
 public:
     SqlData();
+    void connectDataBase();
+    bool searchUser(QString account,QString password);
 
 private:
     QSqlDatabase db;

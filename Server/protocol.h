@@ -1,4 +1,4 @@
-#ifndef PROTOCOL_H
+    #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
 #include <QString>
@@ -24,16 +24,16 @@ enum FileType
 enum InfoType
 {
     Registration = 1125,
-    FindPwd,
-    LoginAcc,
-    SearchFri,
-    AddFri,
-    ChangeOnlSta,
-    SendMsg,
+    FindPassword,
+    LoginAccount,
+    SearchFriend,
+    AddFriend,
+    ChangeOnlineStatus,
+    SendMessage,
     AskForData,
     UserChangeData,
     UpdateHeadShot,
-    SendFileToFri
+    SendFileToFriend
 };
 
 //保存用户资料编号

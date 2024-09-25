@@ -5,6 +5,12 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QTimer>
+#include "protocol.h"
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QByteArray>
+#include <QMessageBox>
+#include <QHash>
 
 //因为一开始创建时没有让TcpThread继承QObject,后来手动添加上去的继承，并使用Q_OBJECT宏
 //导致debug模式下编译无法通过，但是release模式下可以通过
@@ -18,10 +24,46 @@ class TcpThread:public QObject
 public:
     TcpThread();
 
+    //连接服务器处理
+    void connectServer();
+    void autoConnect();
+
+    //数据发送
+    void sendToServer(QByteArray jsonData, QString fileName, int type, int fileNums, QString RecvAccount);
+    void sendFile(QString fileName,QString sendToAccount,int type);
+    void sendJson(QByteArray jsonData);
+
+    //数据接收
+    void getData();
+
+    //合并数据包
+    void mergeDataPackage(QByteArray dataArray);
+
+    //解析json数据包
+    void parseMessage(QByteArray dataArray);
+
+    //数据转换
+    void getJsonData(int type, QString account = "", QString targetAccount = "", QString message = "",QString messageType="");
+
+signals:
+    void loginSuccess(bool result);
+    void myInformation(QString str);
+
 private:
+    //套接字、ip、端口、缓冲区
     QTcpSocket* socket=nullptr;
     QHostAddress address=QHostAddress("127.0.0.1");
     int port=10086;
+    QByteArray dataBuffer;
+
+    //文件指针
+    QFile file;
+    int fileSize;
+    int nowFileSize;
+    //QHash<QString,QPair<int,int>> fileProgress;
+
+    //自动重连定时器
+    QTimer* timer=nullptr;
 };
 
 #endif // TCPTHREAD_H

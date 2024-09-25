@@ -8,5 +8,7 @@
         <file>photo/min2.png</file>
         <file>photo/AHU1.png</file>
         <file>photo/AHU2.png</file>
+        <file>photo/shangjiantou.png</file>
+        <file>photo/xiajiantou.png</file>
     </qresource>
 </RCC>

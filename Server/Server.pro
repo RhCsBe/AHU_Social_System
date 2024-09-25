@@ -13,13 +13,15 @@ SOURCES += \
     protocol.cpp \
     sqldata.cpp \
     tcpthread.cpp \
-    widget.cpp
+    widget.cpp \
+    workthread.cpp
 
 HEADERS += \
     protocol.h \
     sqldata.h \
     tcpthread.h \
-    widget.h
+    widget.h \
+    workthread.h
 
 FORMS += \
     widget.ui

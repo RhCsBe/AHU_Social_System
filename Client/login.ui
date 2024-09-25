@@ -58,7 +58,7 @@
     </property>
     <property name="minimumSize">
      <size>
-      <width>300</width>
+      <width>280</width>
       <height>40</height>
      </size>
     </property>
@@ -246,6 +246,67 @@ color:black;
      <string>注册账号</string>
     </property>
    </widget>
+   <widget class="ElaComboBox" name="account_box">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>40</y>
+      <width>301</width>
+      <height>0</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox{
+background:transparent;
+}
+QComboBox::down-arrow {
+image: url(://photo/xiajiantou.png); /* 默认箭头 */
+}
+QComboBox:active::down-arrow {
+image: url(://photo/shangjiantou.png); /* 聚焦时的箭头 */
+}</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+    <property name="frame">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="down_btn">
+    <property name="geometry">
+     <rect>
+      <x>415</x>
+      <y>19</y>
+      <width>15</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QToolButton{
+border-radius:0;
+image: url(://photo/xiajiantou.png);
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>account</zorder>
+   <zorder>password</zorder>
+   <zorder>widget_2</zorder>
+   <zorder>login</zorder>
+   <zorder>make_account</zorder>
+   <zorder>down_btn</zorder>
+   <zorder>account_box</zorder>
   </widget>
   <widget class="QToolButton" name="close_btn">
    <property name="geometry">
@@ -285,6 +346,9 @@ QToolButton:pressed
      <width>81</width>
      <height>81</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>TextLabel</string>
@@ -341,9 +405,8 @@ QToolButton:pressed
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">QLabel{
-border-radius:38px;
-}</string>
+    <string notr="true">
+</string>
    </property>
    <property name="text">
     <string>TextLabel</string>
@@ -360,6 +423,11 @@ border-radius:38px;
    <class>QtMaterialRaisedButton</class>
    <extends>QPushButton</extends>
    <header location="global">qtmaterialraisedbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">elacombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

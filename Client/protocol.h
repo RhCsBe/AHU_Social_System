@@ -24,16 +24,17 @@ enum FileType
 enum InfoType
 {
     Registration = 1125,
-    FindPwd,
-    LoginAcc,
-    SearchFri,
-    AddFri,
-    ChangeOnlSta,
-    SendMsg,
+    FindPassword,
+    LoginAccount,
+    AllUserData,
+    SearchFriend,
+    AddFriend,
+    ChangeOnlineStatus,
+    SendMessage,
     AskForData,
     UserChangeData,
     UpdateHeadShot,
-    SendFileToFri
+    SendFileToFriend
 };
 
 //保存用户资料编号
@@ -97,6 +98,14 @@ private:
     static QString userHeadShot; //登录账号头像
     static QString userName; //昵称
     static QString signature; //个性签名
+    static QString sex;//性别
+    static int age;//年龄
+    static QString birthday;//生日
+    static QString location;//地址
+    static QString bloodType;//血型
+    static QString college;//学院
+    static QString profession;//专业
+    static int loginTime;//登录时间
 };
 
 #endif // PROTOCOL_H

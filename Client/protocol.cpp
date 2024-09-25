@@ -15,6 +15,14 @@ QString Protocol::userPwd = "";
 QString Protocol::userHeadShot = "";
 QString Protocol::userName = "";
 QString Protocol::signature = "";
+QString Protocol::sex="";
+int Protocol::age=0;
+QString Protocol::birthday="";
+QString Protocol::location="";
+QString Protocol::bloodType="";
+QString Protocol::college="";
+QString Protocol::profession=0;
+int Protocol::loginTime=-1;
 QString Protocol::scrollbarStyle = "QScrollBar{width:8px;background:white;margin:0px,0px,0px,0px;}"
                                  "QScrollBar::handle{width:8px;background:rgb(235,235,235);border-radius:4px;height:20px;}"
                                  "QScrollBar::handle:hover{width:8px;background:rgb(139,139,139);border-radius:4px;height:20px;}";
