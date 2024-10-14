@@ -41,8 +41,8 @@ private:
     QTcpServer* server=nullptr;
     QHostAddress address=QHostAddress::AnyIPv4;
     int port=10086;
-    QHash<QString,QTcpSocket*> allSocket;
-    QHash<QString,QByteArray*> allDateBuffer;
+    QHash<QString,QTcpSocket*> allSocket;//全部连接用户套接字
+    QHash<QString,QByteArray*> allDateBuffer;//数据缓冲区，
 };
 
 #endif // TCPTHREAD_H

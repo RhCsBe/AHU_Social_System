@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
     //启动所有界面
     MainInterface w;
     w.show();
+    ChatWindow ch;
+    ch.show();
     //w.hide();
     //QApplication::setQuitOnLastWindowClosed(false);
     return a.exec();

@@ -156,6 +156,15 @@ QString Protocol::isFileExist(QString filePath)
     }
 }
 
+bool Protocol::isFileExist(QString user, QString fileName)
+{
+    QFileInfo fileInfo;
+    if(fileInfo.exists(workPath+"/"+user+"/"+fileName))
+        return true;
+    else
+        return false;
+}
+
 
 
 

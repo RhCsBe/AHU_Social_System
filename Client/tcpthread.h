@@ -64,6 +64,8 @@ private:
 
     //自动重连定时器
     QTimer* timer=nullptr;
+    QTimer* readTimer=nullptr;
+    static int num;
 };
 
 #endif // TCPTHREAD_H

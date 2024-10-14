@@ -18,7 +18,8 @@ public:
     void parseMessage(QString key,QByteArray dataArray);
     //将回复信息转换成json格式
     void replyJson(QString key,InfoType type, QString message, QString messageType = "", QString account = "", QString targetAccount = "", QString fileName = "");
-
+    //创建或更新文件
+    void updateFile(QString fileName,QByteArray data);
 signals:
     //将数据发回给服务器
     void sendToServer(QString key, int type, QString account, QString targetAccount, QByteArray jsonData, QString messageType, QString fileName);

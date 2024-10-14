@@ -14,6 +14,12 @@
 #include "login.h"
 #include <QMessageBox>
 #include <QSystemTrayIcon>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include "messagedelegate.h"
+#include <QMenu>
+#include <QAction>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainInterface; }
@@ -32,6 +38,12 @@ public:
     void setConnect();//设置相关连接
     void setTcpThread();//设置tcp线程
     void setSystemTrayIcon();//设置系统托盘图标
+    void initUserData();//初始化用户数据
+    void initHead();//初始化主界面头部
+
+    void setView();
+    void setMessageView();
+    void setRelationView();
 
     //实现拖拽效果
     void mousePressEvent(QMouseEvent* event);//重写鼠标按压事件
@@ -39,7 +51,7 @@ public:
     void mouseMoveEvent(QMouseEvent* event);//重写鼠标移动事件
 
 signals:
-    void connectToServer();
+    void connectToServer();//连接服务器，等Tcp任务类移入Tcp线程后启动
 
 private:
     Ui::MainInterface *ui;
@@ -52,5 +64,8 @@ private:
     Login* login;//登录界面
 
     QSystemTrayIcon* systemTray=nullptr;//系统托盘图标
+
+    QStandardItemModel* messageModel=nullptr;//消息列表模型
+    QStandardItemModel* relationModel=nullptr;//联系人列表模型
 };
 #endif // MAININTERFACE_H

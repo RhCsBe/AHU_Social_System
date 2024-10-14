@@ -50,21 +50,50 @@ void Login::setStyle()
 
 void Login::setConnect()
 {
-
     connect(ui->min_btn,&QToolButton::clicked,this,[&](){this->showMinimized();});
     connect(ui->close_btn,&QToolButton::clicked,this,[&](){this->close();});
     connect(ui->login,&QPushButton::clicked,this,[&](){
         if(this->matchRegExp())
         {
-            qDebug()<<"匹配成功";
+            //qDebug()<<"匹配成功";
+            qint64 lastLoginTime=0;
+            qint64 loginTime=QDateTime::currentDateTime().toMSecsSinceEpoch();
+            QJsonObject json=userList.value(ui->account->text());
+            if(!json.isEmpty())
+            {
+                //有登录记录则获取上次登录时间，交给服务端处理同步问题
+                lastLoginTime=json.value("lastLoginTime").toString().toLongLong();
+            }
+            else
+            {
+                lastLoginTime=-1;
+                //不存在登录记录则将第一次登录位设置为true
+                Protocol::isFirstLogin=true;
+            }
+            Protocol::initLoginUserInfo(ui->account->text(),ui->password->text(),lastLoginTime,loginTime);
+            Protocol::isAutoLogin=ui->auto_login->isChecked();
+            Protocol::isRemember=ui->remenber_password->isChecked();
             emit sendLogin(ui->account->text(),ui->password->text());
         }
         else
         {
-            qDebug()<<"匹配失败";
+            //qDebug()<<"匹配失败";
         }
     });
-
+    //设置当账号发生改变时，若找不到历史记录，则将密码清空，头像设置成默认头像，若匹配上历史记录，则设置成历史记录
+    connect(ui->account,&QtMaterialTextField::textChanged,this,[&](QString str){
+        QJsonObject json = userList.value(str);
+        if(json.isEmpty())
+        {
+            //设置默认头像
+            setHeadPhoto("://photo/AHU1.png");
+            ui->password->clear();
+        }
+        else
+        {
+            initLoginData(json);
+        }
+    });
 }
 
 void Login::initUserData()
@@ -80,6 +109,7 @@ void Login::initUserData()
 
     if(userList.size()==0)
     {
+        //设置默认头像
         setHeadPhoto("://photo/AHU1.png");
     }
     else
@@ -93,7 +123,7 @@ void Login::initUserData()
             QFile file(Protocol::getWorkPath()+"/"+user+"/login.json");
             if(!file.open(QFile::ReadOnly))
             {
-                qDebug()<<"打开"<<user<<"的登录文件失败";
+                //qDebug()<<"打开"<<user<<"的登录文件失败";
                 continue;
             }
             //account.append(user);
@@ -116,17 +146,26 @@ void Login::initUserData()
 
 void Login::initLoginData(QJsonObject json)
 {
+    //从json文件中读取用户信息
     QString account,password,headPhoto;
     bool remember,autoLogin;
     account=json.value("account").toString();
     password=json.value("password").toString();
-    headPhoto=Protocol::getWorkPath()+"/"+account+"/"+json.value("headPhoto").toString();
+    //用户头像为空则设置为默认头像
+    if(json.value("headPhoto").toString()=="")
+        headPhoto=DefalutPixmap;
+    else
+        headPhoto=Protocol::getAllUserPath()+"/"+json.value("headPhoto").toString();
     remember=json.value("remember").toBool();
     autoLogin=json.value("autoLogin").toBool();
+
+    //根据读取的数据设置ui参数
     ui->account->setText(account);
     ui->password->setText(password);
     ui->remenber_password->setChecked(remember);
     ui->auto_login->setChecked(autoLogin);
+
+    //设置头像
     setHeadPhoto(headPhoto);
 }
 

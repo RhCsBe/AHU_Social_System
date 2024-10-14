@@ -6,10 +6,23 @@
 #include <QPixmap>
 #include <QDir>
 #include <QDebug>
+#include <QPainter>
+#include <QJsonObject>
 
 #define BufferSize 1024//数据包大小
 #define HeadSize 10//包头大小
 #define NoHeadBufferSize 1014//数据包数据大小
+#define DefalutPixmap ":/photo/AHU1.png"
+
+typedef struct{
+    QString headPhoto;
+    QString userName;
+    QString account;
+    QString message;
+    qint64 time;
+    int sum;
+} MessageItem;
+Q_DECLARE_METATYPE(MessageItem)//注册自定义结构体
 
 //包头类型
 enum FileType
@@ -26,15 +39,15 @@ enum InfoType
     Registration = 1125,
     FindPassword,
     LoginAccount,
-    AllUserData,
     SearchFriend,
     AddFriend,
     ChangeOnlineStatus,
     SendMessage,
     AskForData,
     UserChangeData,
-    UpdateHeadShot,
-    SendFileToFriend
+    UpdateHeadPhoto,
+    SendFileToFriend,
+    AllHeadPhoto
 };
 
 //保存用户资料编号
@@ -62,8 +75,8 @@ public:
     static bool createWorkPath(); //创建工作目录用户数据文件夹
 
     //设置用户信息
-    static void initLoginUserInfo(QString account, QString pwd); //设置用户数据
-    static void initUserNameAndSig(QString name, QString sig); //设置用户名和个签
+    static void initLoginUserInfo(QString account, QString pwd,qint64 lastLoginTime_temp, qint64 loginTime_temp); //设置用户登录时数据
+    static void initUserInfo(QJsonObject json);//设置当前用户信息
 
     /* 登录用户数据文件夹 */
     static QString getUserPath(); //返回登录用户文件夹位置
@@ -76,14 +89,24 @@ public:
     static QString getUserPwd(); //返回登录用户密码
     static QString getUserName(); //返回用户昵称
     static QString getSignature(); //返回用户个签
+    static QString getSex();//返回用户性别
+    static qint64 getLastLoginTime();//返回上次登录时间
+    static qint64 getLoginTime();//返回这次登录时间
+    static int getAge();//返回用户年龄
+    static QString getBirthday();//返回用户生日
+    static QString getLocation();//返回用户地址
+    static QString getBloodType();//返回用户血型
+    static QString getCollege();//返回用户学院
+    static QString getProfession();//返回用户专业
 
-    //static QPixmap createHeadShot(QString pixPath); //返回无锯齿圆形头像
+    static QPixmap createHeadShot(QString pixPath,int radius); //返回无锯齿圆形头像
     static QString isFileExist(QString filepath); //查看文件是否存在，不存在直接返回，存在则添加后缀
 
     static QString scrollbarStyle;
 
     static bool isFirstLogin; //是否是第一次登录
     static bool isRemember; //是否记住密码
+    static bool isAutoLogin; //是否自动登录
     static bool isConnecting; //是否已连接到服务器
 private:
     Protocol();//不允许构造实例
@@ -105,7 +128,8 @@ private:
     static QString bloodType;//血型
     static QString college;//学院
     static QString profession;//专业
-    static int loginTime;//登录时间
+    static qint64 lastLoginTime;//上次登录时间
+    static qint64 loginTime;//登录时间
 };
 
 #endif // PROTOCOL_H

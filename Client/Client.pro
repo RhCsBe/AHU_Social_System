@@ -10,18 +10,22 @@ CONFIG += c++17
 
 SOURCES += \
     chatwindow.cpp \
+    chatwindowdelegate.cpp \
     frienditem.cpp \
     login.cpp \
     main.cpp \
     maininterface.cpp \
+    messagedelegate.cpp \
     protocol.cpp \
     tcpthread.cpp
 
 HEADERS += \
     chatwindow.h \
+    chatwindowdelegate.h \
     frienditem.h \
     login.h \
     maininterface.h \
+    messagedelegate.h \
     protocol.h \
     tcpthread.h
 

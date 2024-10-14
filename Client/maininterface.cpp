@@ -16,6 +16,25 @@ MainInterface::MainInterface(QWidget *parent)
     //FriendItem* myItem=new FriendItem();
     //ui->list->setItemWidget(item,myItem);
     //item->setSizeHint(QSize(ui->list->size().width(),myItem->size().height()));
+    messageModel=new QStandardItemModel(this);
+    relationModel=new QStandardItemModel(this);
+    ui->message_list->setModel(messageModel);
+    ui->message_list->setItemDelegate(new MessageDelegate(this));
+    MessageItem item1={"","user1","","nihaodsjdahkjsadkfjkfjhkadsfdhajhfkjhakjhfadskjhfkdsjhfkjh",123,12};
+    MessageItem item2={"","user2","","早安",QDateTime::currentMSecsSinceEpoch(),1};
+    MessageItem item3={"","user3","","hello world skfdhkhkjhkiu12345678987654321",789,0};
+    QStandardItem* item4=new QStandardItem();
+    QStandardItem* item5=new QStandardItem();
+    QStandardItem* item6=new QStandardItem();
+    item4->setData(QVariant::fromValue(item1),Qt::UserRole+1);
+    item5->setData(QVariant::fromValue(item2),Qt::UserRole+1);
+    item6->setData(QVariant::fromValue(item3),Qt::UserRole+1);
+    messageModel->appendRow(item4);
+    messageModel->appendRow(item5);
+    messageModel->appendRow(item6);
+    //qDebug()<<messageModel->rowCount();
+    //ui->message_list->setIndexWidget();
+    //ui->message_list->setModel(model);
 }
 
 MainInterface::~MainInterface()
@@ -28,12 +47,12 @@ void MainInterface::myInformation(QString str)
     //如果将父对象设置为空指针，那么关闭掉消息盒后主界面也会关闭，然后程序结束
     //原因：不明，但不是子消息队列的缘故，尝试使用非模态，但还是一样的情况，直到给消息盒设置父对象
     //QMessageBox::information(nullptr,"提示",str);
-    QMessageBox::information(this,"提示",str);
+    //QMessageBox::information(this,"提示",str);
 //    QMessageBox *box = new QMessageBox(QMessageBox::Information,"提示",str);
 //    box->setModal(false);
 //    box->setAttribute(Qt::WA_DeleteOnClose);
 //    box->show();
-    qDebug()<<str;
+    //qDebug()<<str;
 }
 
 void MainInterface::setStyle()
@@ -70,6 +89,7 @@ void MainInterface::setConnect()
     //可能是因为设置完毕后，窗体无法托管到任务栏，所以最小化失败
     connect(ui->min_btn,&QToolButton::clicked,this,[&](){this->hide();});
     connect(ui->close_btn,&QToolButton::clicked,this,[&](){this->close();});
+    connect(ui->navigate,&QtMaterialTabs::currentChanged,this,[&](int index){ui->stackedWidget->setCurrentIndex(index);});
 }
 
 void MainInterface::setTcpThread()
@@ -81,12 +101,13 @@ void MainInterface::setTcpThread()
     connect(tcp,&TcpThread::loginSuccess,this,[this](bool result){
         if(result)
         {
+            initUserData();
+            initHead();
             setSystemTrayIcon();
             systemTray->show();
-            qDebug()<<"打开主界面";
+            //qDebug()<<"打开主界面";
             this->show();
             this->login->hide();
-            //this->exec();
         }
         else
         {
@@ -105,6 +126,21 @@ void MainInterface::setSystemTrayIcon()
     systemTray=new QSystemTrayIcon(this);
     QIcon icon("://photo/AHU1.png");
     systemTray->setIcon(icon);
+
+    //给系统托盘添加菜单
+    QMenu* menu=new QMenu(this);
+    QAction* normal=new QAction("显示主界面");
+    QAction* quit=new QAction("退出程序");
+    menu->addAction(normal);
+    menu->addSeparator();
+    menu->addAction(quit);
+    menu->setFont(QFont("Microsoft YaHei", 10));
+    systemTray->setContextMenu(menu);
+
+    //给对应的action绑定处理函数
+    connect(normal,&QAction::triggered,this,[&](){this->showNormal();});
+    connect(quit,&QAction::triggered,this,[&](){QApplication::quit();});
+
     //绑定系统托盘图标的激活信号和处理函数
     connect(systemTray,&QSystemTrayIcon::activated,this,[&](QSystemTrayIcon::ActivationReason reason)->void{
         if(reason==QSystemTrayIcon::Trigger)
@@ -117,6 +153,67 @@ void MainInterface::setSystemTrayIcon()
         //窗体获取焦点，显示在最上层
         this->activateWindow();
     });
+}
+
+void MainInterface::initUserData()
+{
+    QString fileName=Protocol::getUserLoginFile();
+    QFile file(fileName);
+    if(!file.open(QFile::ReadOnly))
+    {
+        //qDebug()<<fileName<<"打开失败";
+        return;
+    }
+    QByteArray data=file.readAll();
+    QJsonObject json=QJsonDocument::fromJson(data).object();
+    Protocol::initUserInfo(json);
+}
+
+void MainInterface::initHead()
+{
+    //根据存储在协议类中的静态数据来初始化主界面头部
+    //qDebug()<<Protocol::getUserHeadShot();
+    ui->head_btn->setIcon(Protocol::createHeadShot(Protocol::getUserHeadShot(),ui->head_btn->size().width()/2));
+    ui->user_name->setText(Protocol::getUserName());
+    if(Protocol::getSignature()=="")
+    {
+        ui->signature->setText("编辑个性签名");
+    }
+    else
+    {
+        ui->signature->setText(Protocol::getSignature());
+    }
+}
+
+void MainInterface::setView()
+{
+    setMessageView();
+    setRelationView();
+}
+
+void MainInterface::setMessageView()
+{
+    
+}
+
+void MainInterface::setRelationView()
+{
+    //初始化model指针
+    relationModel=new QStandardItemModel(this);
+    //打开对应的
+    QFile file("friend.json");
+    file.open(QFile::ReadOnly);
+    QByteArray data=file.readAll();
+    QJsonDocument jsonDoc=QJsonDocument::fromJson(data);
+    QJsonArray jsonArray=jsonDoc.array();
+    for(auto i:jsonArray)
+    {
+        QStandardItem item;
+        QJsonObject jsonObj=i.toObject();
+        MessageItem message={jsonObj.value("headPhoto").toString(),jsonObj.value("userName").toString(),jsonObj.value("signature").toString(),0,0};
+        item.setData(QVariant::fromValue(message),Qt::UserRole+1);
+        relationModel->appendRow(&item);
+    }
 }
 
 void MainInterface::mousePressEvent(QMouseEvent* event)

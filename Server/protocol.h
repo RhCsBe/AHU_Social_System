@@ -32,8 +32,9 @@ enum InfoType
     SendMessage,
     AskForData,
     UserChangeData,
-    UpdateHeadShot,
-    SendFileToFriend
+    UpdateHeadPhoto,
+    SendFileToFriend,
+    AllHeadPhoto
 };
 
 //保存用户资料编号
@@ -78,6 +79,7 @@ public:
 
     //static QPixmap createHeadShot(QString pixPath); //返回无锯齿圆形头像
     static QString isFileExist(QString filepath); //查看文件是否存在，不存在直接返回，存在则添加后缀
+    static bool isFileExist(QString user,QString fileName);//判断在该用户文件夹下该文件是否存在
 
     static QString scrollbarStyle;
 

@@ -5,6 +5,9 @@
 #include <QFontMetrics>
 #include <QDebug>
 #include <QMouseEvent>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include "chatwindowdelegate.h"
 
 namespace Ui {
 class ChatWindow;
@@ -29,6 +32,7 @@ private:
     Ui::ChatWindow *ui;
     bool pressed=false;//鼠标点击信号
     QPoint pressPoint;//鼠标点击初始位置
+    QStandardItemModel *model=nullptr;
 };
 
 #endif // CHATWINDOW_H

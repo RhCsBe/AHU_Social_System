@@ -1,5 +1,7 @@
 #include "tcpthread.h"
 
+int TcpThread::num=0;
+
 TcpThread::TcpThread()
 {
     //为了保证线程安全，要先将TcpThread移入子线程后再new对象
@@ -23,6 +25,9 @@ void TcpThread::connectServer()
         connect(socket,&QTcpSocket::readyRead,this,&TcpThread::getData,Qt::QueuedConnection);
         qDebug()<<"等待连接";
     }
+    readTimer=new QTimer(this);
+    connect(readTimer,&QTimer::timeout,this,[&](){emit socket->readyRead();});
+    //readTimer->start(1000);
     socket->connectToHost(address,port);
 }
 
@@ -34,7 +39,6 @@ void TcpThread::autoConnect()
         connect(timer,&QTimer::timeout,this,[&](){
             connectServer();
             socket->waitForConnected(1000);
-            qDebug()<<"hahah";
             if(Protocol::isConnecting)
             {
                 timer->stop();
@@ -164,21 +168,29 @@ void TcpThread::getData()
         if(dataSize+dataBuffer.size()==BufferSize)
         {
             dataBuffer.append(receiveData);
-            emit myInformation("客户端收到一个数据包");
-            //qDebug()<<"客户端收到一个数据包";
-            //QMessageBox::information(nullptr,"提示","客户端收到一个数据包");
+            //emit myInformation("客户端收到一个数据包");
             mergeDataPackage(dataBuffer);
             dataBuffer.clear();
         }
         //如果接受到的数据块大小加上缓冲区数据大小大于数据包大小，则将数据拼接成一个数据包大小，发送接收完成信号，并将剩余数据装入缓冲区
         else if(dataSize+dataBuffer.size()>BufferSize)
         {
-            int otherSize=BufferSize-dataBuffer.size();
-            dataBuffer.append(receiveData.left(otherSize));
-            receiveData.remove(0,otherSize);
-            mergeDataPackage(dataBuffer);
-            dataBuffer.clear();
             dataBuffer.append(receiveData);
+            while(dataBuffer.size()>=BufferSize)
+            {
+                mergeDataPackage(dataBuffer.left(BufferSize));
+                dataBuffer.remove(0,BufferSize);
+                //QByteArray的remove函数返回值是修改过后的字节序列，不是裁剪的片段，所以会出现数据缺失和错位的现象
+                qDebug()<<"BufferSize:"<<dataBuffer.size();
+                //mergeDataPackage(dataBuffer.remove(0,BufferSize));
+                //qDebug()<<"BufferSize:"<<dataBuffer.size();
+            }
+//            int otherSize=BufferSize-dataBuffer.size();
+//            dataBuffer.append(receiveData.left(otherSize));
+//            receiveData.remove(0,otherSize);
+//            mergeDataPackage(dataBuffer);
+//            dataBuffer.clear();
+//            dataBuffer.append(receiveData);
         }
         //如果接受到的数据块大小加上缓冲区数据大小小于数据包大小，则直接进行数据拼接
         else if(dataSize+dataBuffer.size()<BufferSize)
@@ -195,32 +207,40 @@ void TcpThread::getData()
 
 void TcpThread::mergeDataPackage(QByteArray dataArray)
 {
+    num++;
+    qDebug()<<"num:"<<num;
     QDataStream fileHead(&dataArray,QFile::ReadOnly);
     FileType fileType;
     qint16 space;
     int packetSize;
-    fileHead>>fileType>>space>>fileSize;
+    fileHead>>fileType>>space>>packetSize;
     dataArray.remove(0,10);
+    qDebug()<<"fileType:"<<FileType(fileType);
     switch (fileType)
     {
     case JsonDataHead:
         //json数据可以直接解析
+        qDebug()<<"收到json数据";
         parseMessage(dataArray.left(packetSize));
         break;
     case FileInfoHead:
         {
+            //上面对数据进行了处理，原来数据流的定位已经不准了，要重新开一个
+            QDataStream readFile(&dataArray,QFile::ReadOnly);
             int type,fileSize;
             QString fileName,sendToAccount;
-            fileHead>>type>>fileSize>>fileName>>sendToAccount;
+            //fileHead>>type>>fileSize>>fileName>>sendToAccount;
+            readFile>>type>>fileSize>>fileName>>sendToAccount;
             this->fileSize=fileSize;
             this->nowFileSize=0;
+            qDebug()<<"type:"<<type;
             switch(type)
             {
                 case LoginAccount://接收登录数据
                 {
                     //第一次登录时文件夹不存在，需要创建文件夹
                     QDir dir;
-                    if(dir.exists(Protocol::getUserPath()))
+                    if(!dir.exists(Protocol::getUserPath()))
                     {
                         if(!dir.mkdir(Protocol::getUserPath()))
                         {
@@ -234,18 +254,18 @@ void TcpThread::mergeDataPackage(QByteArray dataArray)
                         }
                     }
                     file.setFileName(Protocol::getUserPath()+"/"+fileName);
-                    if(!file.open(QFile::WriteOnly|QFile::Truncate))
+                    qDebug()<<"fileName"<<file.fileName();
+                    if(!file.open(QFile::WriteOnly))
                     {
-                    qDebug()<<"文件"<<fileName<<"打开失败";
-                    return;
+                        qDebug()<<"文件"<<fileName<<"打开失败";
+                        return;
                     }
-                    //fileProgress.insert(fileName,QPair<0,fileSize>);
                     break;
                 }
-                case AllUserData://接收好友头像
+                case AllHeadPhoto://接收头像
                 {
                     file.setFileName(Protocol::getAllUserPath()+"/"+fileName);
-                    if(!file.open(QFile::WriteOnly|QFile::Truncate))
+                    if(!file.open(QFile::WriteOnly))
                     {
                     qDebug()<<"文件"<<fileName<<"打开失败";
                     return;
@@ -309,8 +329,12 @@ void TcpThread::getJsonData(int type, QString account, QString targetAccount, QS
         case LoginAccount:
             data.insert("account",account);
             data.insert("password",message);
+            data.insert("lastLoginTime",QString::number(Protocol::getLastLoginTime()));
+            data.insert("loginTime",QString::number(Protocol::getLoginTime()));
+            data.insert("remember",Protocol::isRemember);
+            data.insert("autoLogin",Protocol::isAutoLogin);
+            data.insert("isFirstLogin",Protocol::isFirstLogin);
             break;
-
         default:
             break;
     }

@@ -29,6 +29,7 @@ Widget::~Widget()
 
 void Widget::myInformation(QString str)
 {
-    QMessageBox::information(nullptr,"提示",str);
+    //QMessageBox::information(nullptr,"提示",str);
+    qDebug()<<str;
 }
 

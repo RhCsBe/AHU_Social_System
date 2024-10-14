@@ -300,13 +300,13 @@ image: url(://photo/xiajiantou.png);
      <string/>
     </property>
    </widget>
+   <zorder>account_box</zorder>
    <zorder>account</zorder>
    <zorder>password</zorder>
    <zorder>widget_2</zorder>
    <zorder>login</zorder>
    <zorder>make_account</zorder>
    <zorder>down_btn</zorder>
-   <zorder>account_box</zorder>
   </widget>
   <widget class="QToolButton" name="close_btn">
    <property name="geometry">
@@ -405,8 +405,7 @@ QToolButton:pressed
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>TextLabel</string>

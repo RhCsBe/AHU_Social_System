@@ -49,14 +49,12 @@ void TcpThread::getData()
         //如果接受到的数据块大小加上缓冲区数据大小大于数据包大小，则将数据拼接成一个数据包大小，发送接收完成信号，并将剩余数据装入缓冲区
         else if(dataSize+dataBuffer->size()>BufferSize)
         {
-            int otherSize=BufferSize-dataBuffer->size();
-            QByteArray dataArray;
-            dataArray.append(*dataBuffer);
-            dataArray.append(receiveData.left(otherSize));
-            receiveData.remove(0,otherSize);
-            emit receiveFinished(key,dataArray);
-            dataBuffer->clear();
             dataBuffer->append(receiveData);
+            while(dataBuffer->size()>=BufferSize)
+            {
+                receiveFinished(key,dataBuffer->left(BufferSize));
+                dataBuffer->remove(0,BufferSize);
+            }
         }
         //如果接受到的数据块大小加上缓冲区数据大小小于数据包大小，则直接进行数据拼接
         else if(dataSize+dataBuffer->size()<BufferSize)
@@ -74,16 +72,30 @@ void TcpThread::getData()
 void TcpThread::sendToClient(QString key, int type, QString account, QString targetAccount, QByteArray jsonData, QString messageType, QString fileName)
 {
     QTcpSocket* socket;
+    socket=allSocket[key];
     switch(type)
     {
         case LoginAccount:
+        case AllHeadPhoto:
         {
-            //因为此时用户并未完成登录，所以要使用key在allSocket中查找对应的套接字指针
-            socket=allSocket[key];
-            sendJson(socket,jsonData);
+            if(fileName!="")
+            {
+                QStringList list=fileName.split("?");
+                for(auto i:list)
+                {
+                    qDebug()<<i;
+                    SendFile(socket,i,"",type);
+                }
+            }
             break;
         }
-        }
+
+    }
+    if(jsonData.size()>0)
+    {
+        qDebug()<<"发送json数据";
+        sendJson(socket,jsonData);
+    }
 }
 
 void TcpThread::SendFile(QTcpSocket *socket, QString fileName, QString senderAccount, int type)
@@ -151,6 +163,7 @@ void TcpThread::SendFile(QTcpSocket *socket, QString fileName, QString senderAcc
 
     //关闭文件
     file.close();
+    qDebug()<<fileName<<"发送完毕";
 }
 
 void TcpThread::sendJson(QTcpSocket *socket, QByteArray jsonData)

@@ -8,6 +8,22 @@ ChatWindow::ChatWindow(QWidget *parent) :
     ui->setupUi(this);
     setStyle();
     setConnect();
+    model=new QStandardItemModel(this);
+
+    ui->message_list->setModel(model);
+    ui->message_list->setItemDelegate(new ChatWindowDelegate(this));
+    MessageItem item1={"E02114320.jpg","RhCsBe","E02114320","nihaodsjdahkjsadkfjkfjhkadsfdhajhfkjhakjhfadskjhfkdsjhfkjh",123,12};
+    MessageItem item2={"","user2","","早安",QDateTime::currentMSecsSinceEpoch(),1};
+    MessageItem item3={"","user3","","hello world \nskfdhkhkjhkiu12345678987654321",789,0};
+    QStandardItem* item4=new QStandardItem();
+    QStandardItem* item5=new QStandardItem();
+    QStandardItem* item6=new QStandardItem();
+    item4->setData(QVariant::fromValue(item1),Qt::UserRole+1);
+    item5->setData(QVariant::fromValue(item2),Qt::UserRole+1);
+    item6->setData(QVariant::fromValue(item3),Qt::UserRole+1);
+    model->appendRow(item4);
+    model->appendRow(item5);
+    model->appendRow(item6);
 }
 
 ChatWindow::~ChatWindow()

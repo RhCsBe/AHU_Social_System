@@ -22,6 +22,7 @@
 #include <QEvent>
 #include <QBitmap>
 #include <QPainter>
+#include <QDateTime>
 
 namespace Ui {
 class Login;
