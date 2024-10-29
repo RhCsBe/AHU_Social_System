@@ -257,7 +257,7 @@ background-color:white;
         <number>0</number>
        </property>
        <item>
-        <widget class="ElaTreeView" name="friend_list"/>
+        <widget class="QListView" name="friend_list"/>
        </item>
       </layout>
      </widget>
@@ -271,11 +271,6 @@ background-color:white;
    <extends>QWidget</extends>
    <header location="global">qtmaterialtabs.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ElaTreeView</class>
-   <extends>QTreeView</extends>
-   <header location="global">elatreeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

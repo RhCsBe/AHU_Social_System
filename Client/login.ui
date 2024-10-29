@@ -291,9 +291,8 @@ image: url(://photo/shangjiantou.png); /* 聚焦时的箭头 */
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QToolButton{
-border-radius:0;
-image: url(://photo/xiajiantou.png);
+     <string notr="true">#down_btn{
+border:none;
 }</string>
     </property>
     <property name="text">
@@ -414,9 +413,9 @@ QToolButton:pressed
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtMaterialTextField</class>
-   <extends>QLineEdit</extends>
-   <header location="global">qtmaterialtextfield.h</header>
+   <class>ElaComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">elacombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QtMaterialRaisedButton</class>
@@ -424,9 +423,9 @@ QToolButton:pressed
    <header location="global">qtmaterialraisedbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>ElaComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">elacombobox.h</header>
+   <class>QtMaterialTextField</class>
+   <extends>QLineEdit</extends>
+   <header location="global">qtmaterialtextfield.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

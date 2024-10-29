@@ -25,7 +25,7 @@ void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
         QString headPath=itemData.headPhoto;
         if(headPath.isEmpty())
-            headPath=DefalutPixmap;
+            headPath=DefaultPixmap;
         else
             headPath=Protocol::getAllUserPath()+"/"+itemData.headPhoto;
         //始终静态方法获得圆角头像
@@ -77,7 +77,7 @@ void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         // 绘制头像，用户名，最近消息
         painter->drawPixmap(headPhotoRect, headPhoto);
         painter->setPen(QPen(Qt::black));
-        painter->setFont(QFont("Microsoft Yahei", 13));
+        painter->setFont(QFont("Microsoft Yahei", 12));
         painter->drawText(userNameRect,Qt::AlignLeft,itemData.userName);
 
         //bug修复，当信息过长，超出绘制区域时，如果存在空格，会截断空格以后的内容，也就是一个单词（万恶的洋人）
@@ -103,7 +103,9 @@ void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
         //绘制时间
         QDateTime time=QDateTime::fromMSecsSinceEpoch(itemData.time);
-        QDateTime nowTime=QDateTime::currentDateTimeUtc();
+        //直接使用QDateTime::currentDateTimeUtc()获取的时间比东八区的慢几个小时
+        //QDateTime::fromMSecsSinceEpoch的默认时区改成了本地
+        QDateTime nowTime=QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch());
         QString str="";
         if(time.date().year()==nowTime.date().year()&&time.date().month()==nowTime.date().month()&&time.date().day()==nowTime.date().day())
         {

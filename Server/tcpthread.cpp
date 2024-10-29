@@ -15,10 +15,32 @@ void TcpThread::initServer()
             QTcpSocket* socket=server->nextPendingConnection();
             QByteArray* byteArray=new QByteArray();
             connect(socket,&QTcpSocket::readyRead,this,&TcpThread::getData,Qt::QueuedConnection);
-            QString key=socket->peerAddress().toString()+QString::number(socket->peerPort());
+            QString key=socket->peerAddress().toString()+" "+QString::number(socket->peerPort());
             qDebug()<<key;
-            allSocket.insert(key,socket);
+            allSocket.insert(key,socket);//存储socket指针
+            ipAndPort.insert(socket,key);//记录ip和端口，后面有用
             allDateBuffer.insert(key,byteArray);
+            connect(socket,&QTcpSocket::disconnected,this,[&](){
+                //因为QTcpSocket断开连接后peerAddress()和peerPort()会失效，所以直接使用之前记录的key
+                //QString key=static_cast<QTcpSocket*>(sender())->peerAddress().toString()+" "+QString::number(static_cast<QTcpSocket*>(sender())->peerPort());
+                //因为lambda表达式在捕获时，socket局部变量已经失效，所以在这要获取sender并转成QTcpSocket*
+                QTcpSocket* socket=static_cast<QTcpSocket*>(sender());
+                QString key=ipAndPort.value(socket);
+                qDebug()<<key;
+                ipAndPort.remove(socket);
+                allSocket.remove(key);
+                if(allToOnline.contains(key))
+                {
+                    //发送用户下线信号
+                    emit userDownLine(allToOnline[key]);
+                    //清理两个hash表中的相关信息
+                    onlineSocket.remove(allToOnline[key]);
+                    allToOnline.remove(key);
+                }
+                //关闭套接字并释放空间
+                socket->close();
+                socket->deleteLater();
+            },Qt::QueuedConnection);
         }
     });
 }
@@ -28,7 +50,7 @@ void TcpThread::getData()
     //获取触发readyRead信号的套接字指针
     QTcpSocket* socket=(QTcpSocket*)sender();
     //获取socket对应的缓冲区
-    QString key=socket->peerAddress().toString()+QString::number(socket->peerPort());
+    QString key=socket->peerAddress().toString()+" "+QString::number(socket->peerPort());
     QByteArray* dataBuffer=allDateBuffer.value(key);
     //如果有可读取的数据则读取
     if(socket->bytesAvailable())
@@ -71,13 +93,14 @@ void TcpThread::getData()
 
 void TcpThread::sendToClient(QString key, int type, QString account, QString targetAccount, QByteArray jsonData, QString messageType, QString fileName)
 {
-    QTcpSocket* socket;
-    socket=allSocket[key];
+    QTcpSocket* socket=nullptr;
     switch(type)
     {
-        case LoginAccount:
-        case AllHeadPhoto:
+        case Registration://用户注册
+        case LoginAccount://用户登录
+        case AllHeadPhoto://所有用户头像
         {
+            socket=allSocket[key];
             if(fileName!="")
             {
                 QStringList list=fileName.split("?");
@@ -90,11 +113,46 @@ void TcpThread::sendToClient(QString key, int type, QString account, QString tar
             break;
         }
 
+        case SendMessage://发送信息
+        {
+            socket=onlineSocket[targetAccount];
+            qDebug()<<"target:"<<targetAccount<<"\t"<<socket;
+            if(fileName!="")
+            {
+                QStringList list=fileName.split("?");
+                for(auto i:list)
+                {
+                    qDebug()<<i;
+                    SendFile(socket,i,"",type);
+                }
+            }
+            break;
+        }
+        case HistoryMessage://发送历史消息文件
+        {
+            socket=onlineSocket[targetAccount];
+            qDebug()<<"target:"<<targetAccount<<"\t"<<socket;
+            if(fileName!="")
+            {
+                QStringList list=fileName.split("?");
+                for(auto i:list)
+                {
+                    qDebug()<<i;
+                    //messageType中写入的是时间戳字符串，让客户端用来分文件夹
+                    SendFile(socket,i,messageType,type);
+                }
+            }
+            break;
+        }
+        default:
+            break;
     }
+
     if(jsonData.size()>0)
     {
         qDebug()<<"发送json数据";
         sendJson(socket,jsonData);
+        qDebug()<<"json发送完毕";
     }
 }
 
@@ -180,5 +238,12 @@ void TcpThread::sendJson(QTcpSocket *socket, QByteArray jsonData)
     //发送数据并阻塞等待
     socket->write(dataArray);
     socket->waitForBytesWritten();
-    emit myInformation("服务器发送了一个json数据包");
+    //emit myInformation("服务器发送了一个json数据包");
+}
+
+void TcpThread::addUserOnline(QString account, QString key)
+{
+    //qDebug()<<"account:"<<account<<"\tkey:"<<key;
+    allToOnline.insert(key,account);//添加两个hash表键的映射
+    onlineSocket.insert(account,allSocket[key]);
 }

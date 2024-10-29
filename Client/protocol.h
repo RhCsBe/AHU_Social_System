@@ -8,16 +8,17 @@
 #include <QDebug>
 #include <QPainter>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #define BufferSize 1024//数据包大小
 #define HeadSize 10//包头大小
 #define NoHeadBufferSize 1014//数据包数据大小
-#define DefalutPixmap ":/photo/AHU1.png"
+#define DefaultPixmap ":/photo/AHU1.png"
 
 typedef struct{
-    QString headPhoto;
-    QString userName;
     QString account;
+    QString userName;
+    QString headPhoto;
     QString message;
     qint64 time;
     int sum;
@@ -47,7 +48,8 @@ enum InfoType
     UserChangeData,
     UpdateHeadPhoto,
     SendFileToFriend,
-    AllHeadPhoto
+    AllHeadPhoto,
+    HistoryMessage
 };
 
 //保存用户资料编号
@@ -108,6 +110,7 @@ public:
     static bool isRemember; //是否记住密码
     static bool isAutoLogin; //是否自动登录
     static bool isConnecting; //是否已连接到服务器
+    static bool isLogin;//是否已经登录账号
 private:
     Protocol();//不允许构造实例
     static QString workPath; //工作目录下用户数据文件夹
@@ -118,7 +121,7 @@ private:
 
     static QString userAccount; //登录账号
     static QString userPwd; //登录密码
-    static QString userHeadShot; //登录账号头像
+    static QString userHeadShot; //登录账号头像,只有文件名加后缀，没有路径
     static QString userName; //昵称
     static QString signature; //个性签名
     static QString sex;//性别

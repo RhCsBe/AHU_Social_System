@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Personal</class>
+ <widget class="QWidget" name="Personal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>902</width>
+    <height>648</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="left_widget" native="true">
+     <property name="maximumSize">
+      <size>
+       <width>440</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="left_top" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="background">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="left_bottom" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">#left_bottom{
+background:#322625;
+}</string>
+        </property>
+        <widget class="QLabel" name="user_name">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>30</y>
+           <width>231</width>
+           <height>70</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>17</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#user_name{
+color:white;
+}</string>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QtMaterialRaisedButton" name="function_button">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>120</y>
+           <width>331</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="headPhoto">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>30</y>
+           <width>75</width>
+           <height>75</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="right_widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#right_widget{
+background:white;
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="right_top" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>51</height>
+         </size>
+        </property>
+        <widget class="QToolButton" name="min_btn">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>0</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton:hover
+{
+	background-color:rgba(200, 200, 200,85);
+}
+QToolButton:pressed
+{
+	background-color:rgba(220,220,220,85);
+}</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="close_btn">
+         <property name="geometry">
+          <rect>
+           <x>410</x>
+           <y>0</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton:hover 
+{
+	background-color:rgb(255, 0, 0);
+}
+QToolButton:pressed
+{
+	background-color:rgb(170, 0, 0);
+}</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="right_bottom" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>462</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <widget class="QStackedWidget" name="personal_stack">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>462</width>
+           <height>597</height>
+          </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>462</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="user_page">
+          <property name="styleSheet">
+           <string notr="true">#user_page{
+background:transparent;
+}</string>
+          </property>
+          <widget class="QLabel" name="age">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>190</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>年龄：</string>
+           </property>
+          </widget>
+          <widget class="ElaComboBox" name="profession_box">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>390</y>
+             <width>251</width>
+             <height>35</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+          </widget>
+          <widget class="ElaCalendarPicker" name="birthday_calendar">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>240</y>
+             <width>201</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QLabel" name="userName">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>90</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>昵称：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="account">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>40</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>账号：</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="age_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>190</y>
+             <width>241</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>18</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="account_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>40</y>
+             <width>251</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>E02114320</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="ElaComboBox" name="sex_box">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>140</y>
+             <width>241</width>
+             <height>35</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>男</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>女</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="ElaComboBox" name="location_box">
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>290</y>
+             <width>111</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>中国</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>老美</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>俄罗斯</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>其他</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLabel" name="location">
+           <property name="geometry">
+            <rect>
+             <x>240</x>
+             <y>290</y>
+             <width>41</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>位置：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="profession">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>390</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>专业：</string>
+           </property>
+          </widget>
+          <widget class="ElaComboBox" name="college_box">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>340</y>
+             <width>251</width>
+             <height>35</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>计算机科学与技术学院</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>其他学院</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLabel" name="blood_type">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>290</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>血型：</string>
+           </property>
+          </widget>
+          <widget class="ElaComboBox" name="bloodType_box">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>290</y>
+             <width>91</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>A型</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>B型</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>AB型</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>O型</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>未知</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLabel" name="birthday">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>240</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>生日：</string>
+           </property>
+          </widget>
+          <widget class="ElaLineEdit" name="userName_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>90</y>
+             <width>251</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>RhCsBe</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="college">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>340</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>学院：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="sex">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>140</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>性别：</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="group_page">
+          <property name="styleSheet">
+           <string notr="true">#group_page{
+background:transparent;
+}</string>
+          </property>
+          <widget class="QLineEdit" name="sum_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>130</x>
+             <y>190</y>
+             <width>241</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>18</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="group_account_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>130</x>
+             <y>40</y>
+             <width>251</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>G02114000</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="ElaLineEdit" name="group_name_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>130</x>
+             <y>90</y>
+             <width>251</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>软件二班</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="sum">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>190</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>人数：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="group_host">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>140</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>群主：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="group_name">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>90</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>群名：</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="group_account">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>40</y>
+             <width>51</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>群号：</string>
+           </property>
+          </widget>
+          <widget class="ElaLineEdit" name="group_host_edit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>130</x>
+             <y>140</y>
+             <width>251</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{
+color:black;
+background:transparent;
+}</string>
+           </property>
+           <property name="text">
+            <string>宋思义</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QListView" name="member_view">
+           <property name="geometry">
+            <rect>
+             <x>60</x>
+             <y>240</y>
+             <width>351</width>
+             <height>321</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElaComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">elacombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">elalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QtMaterialRaisedButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qtmaterialraisedbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaCalendarPicker</class>
+   <extends>QPushButton</extends>
+   <header location="global">elacalendarpicker.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

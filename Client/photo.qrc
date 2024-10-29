@@ -10,5 +10,12 @@
         <file>photo/AHU2.png</file>
         <file>photo/shangjiantou.png</file>
         <file>photo/xiajiantou.png</file>
+        <file>photo/background.jfif</file>
+        <file>photo/background2.jfif</file>
+        <file>photo/background3.jfif</file>
+        <file>photo/background4.jfif</file>
+        <file>photo/background5.jfif</file>
+        <file>photo/background6.jfif</file>
+        <file>photo/AHU3.jfif</file>
     </qresource>
 </RCC>

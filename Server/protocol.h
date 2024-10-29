@@ -34,7 +34,8 @@ enum InfoType
     UserChangeData,
     UpdateHeadPhoto,
     SendFileToFriend,
-    AllHeadPhoto
+    AllHeadPhoto,
+    HistoryMessage
 };
 
 //保存用户资料编号

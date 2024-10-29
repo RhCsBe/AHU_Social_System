@@ -6,12 +6,16 @@
 #include "protocol.h"
 #include <QFile>
 #include <QHash>
+#include <QTimer>
+#include <algorithm>
 
 class WorkThread : public QObject
 {
     Q_OBJECT
 public:
     explicit WorkThread(QObject *parent = nullptr);
+
+    //文件传输和接收以及解析
     //合并数据包
     void mergeDataPackage(QString key,QByteArray dataArray);
     //解析json数据包
@@ -20,14 +24,31 @@ public:
     void replyJson(QString key,InfoType type, QString message, QString messageType = "", QString account = "", QString targetAccount = "", QString fileName = "");
     //创建或更新文件
     void updateFile(QString fileName,QByteArray data);
+
+    //消息存储相关
+    void openMessageFile(QString sender,QString receiver);//创建消息缓冲（发送者，接收者）
+    void addMessage(QString sender,QString receiver,QJsonObject json);//将json数据添加进消息缓存
+    QJsonObject messageTaskToMessage(QJsonObject data);//将收到的messageTask转成可以存储的message
+
+    //用户上线/下线
+    void sendMessageFile(QString account,qint64 lastLoginTime);//发送消息文件，即客户端同步服务器数据
+    void sendMessageTask(QString account);//发送用户未收到的消息
+    //void userUpLine(QString account,qint64 loginTime,qint64 lastLoginTime,bool remember,bool autoLogin,bool firstLogin);
+    void userDownLine(QString account);//用户下线设置
+
+    //用户注册
+    void userRegister(QString account,QString password);
+
 signals:
     //将数据发回给服务器
     void sendToServer(QString key, int type, QString account, QString targetAccount, QByteArray jsonData, QString messageType, QString fileName);
     void myInformation(QString str);
+    void addUserOnline(QString account,QString key);
 private:
     SqlData sql;
     QHash<QString,QFile*> fileArray;
     QHash<QString,QPair<int,int>> fileSize;
+    QHash<QString,QHash<QString,QJsonArray*>> messageArray;
 };
 
 #endif // WORKTHREAD_H

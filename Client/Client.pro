@@ -16,7 +16,9 @@ SOURCES += \
     main.cpp \
     maininterface.cpp \
     messagedelegate.cpp \
+    personal.cpp \
     protocol.cpp \
+    register.cpp \
     tcpthread.cpp
 
 HEADERS += \
@@ -26,14 +28,18 @@ HEADERS += \
     login.h \
     maininterface.h \
     messagedelegate.h \
+    personal.h \
     protocol.h \
+    register.h \
     tcpthread.h
 
 FORMS += \
     chatwindow.ui \
     frienditem.ui \
     login.ui \
-    maininterface.ui
+    maininterface.ui \
+    personal.ui \
+    register.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -47,7 +53,8 @@ INCLUDEPATH += F:/QTMyWidget/QT5/QT-material-widget/components
 DEPENDPATH += F:/QTMyWidget/QT5/QT-material-widget/components
 
 RESOURCES += \
-    photo.qrc
+    photo.qrc \
+    ElaWidgetTools.qrc
 
 win32:CONFIG(release, debug|release): LIBS += -LF:/QTMyWidget/QT5/ElaWidgetTools/ -llibelawidgettools.dll
 else:win32:CONFIG(debug, debug|release): LIBS += -LF:/QTMyWidget/QT5/ElaWidgetTools/ -llibelawidgettools.dlld

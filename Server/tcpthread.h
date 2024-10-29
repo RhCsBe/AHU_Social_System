@@ -33,15 +33,22 @@ public:
     //发送json文件
     void sendJson(QTcpSocket* socket,QByteArray jsonData);
 
+    //添加在线用户套接字
+    void addUserOnline(QString account,QString key);
+
 signals:
     void receiveFinished(QString key, QByteArray dataBuffer);
     void myInformation(QString str);
+    void userDownLine(QString account);
 
 private:
     QTcpServer* server=nullptr;
     QHostAddress address=QHostAddress::AnyIPv4;
     int port=10086;
     QHash<QString,QTcpSocket*> allSocket;//全部连接用户套接字
+    QHash<QTcpSocket*,QString> ipAndPort;//所有套接字对应的ip和端口，也就是allSocket和allToOnline的key
+    QHash<QString,QTcpSocket*> onlineSocket;//在线用户套接字
+    QHash<QString,QString> allToOnline;//allSocket和onlineSocket的键的映射
     QHash<QString,QByteArray*> allDateBuffer;//数据缓冲区，
 };
 

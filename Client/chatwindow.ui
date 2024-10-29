@@ -280,7 +280,7 @@ border-top:1px solid grey;
        <string>关闭</string>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="message">
+     <widget class="QTextEdit" name="message">
       <property name="geometry">
        <rect>
         <x>0</x>

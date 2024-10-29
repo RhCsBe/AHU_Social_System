@@ -23,6 +23,8 @@
 #include <QBitmap>
 #include <QPainter>
 #include <QDateTime>
+#include <ElaMessageBar.h>
+#include "register.h"
 
 namespace Ui {
 class Login;
@@ -53,8 +55,15 @@ public:
     //前端正则匹配
     bool matchRegExp();
 
+    //注册相关
+    void registerResult(int result);
+
+    //登录相关
+    void loginResult(bool result);
+
 signals:
     void sendLogin(QString account,QString password);
+    void userRegister(QString account,QString message,QString messageType);
 
 private:
     Ui::Login *ui;
@@ -63,6 +72,7 @@ private:
     QHash<QString,QJsonObject> userList;//登录用户信息表
     bool down=false;
     ElaComboBox* box=nullptr;
+    Register* registerWindow=nullptr;
 };
 
 #endif // LOGIN_H

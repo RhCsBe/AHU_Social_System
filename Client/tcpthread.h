@@ -8,6 +8,7 @@
 #include "protocol.h"
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QByteArray>
 #include <QMessageBox>
 #include <QHash>
@@ -25,8 +26,9 @@ public:
     TcpThread();
 
     //连接服务器处理
-    void connectServer();
-    void autoConnect();
+    void connectServer();//设置连接服务器
+    void autoConnect();//自动重连
+    void startAutoConnet();//开始自动重连
 
     //数据发送
     void sendToServer(QByteArray jsonData, QString fileName, int type, int fileNums, QString RecvAccount);
@@ -46,8 +48,12 @@ public:
     void getJsonData(int type, QString account = "", QString targetAccount = "", QString message = "",QString messageType="");
 
 signals:
+    void registerResult(int result);
     void loginSuccess(bool result);
     void myInformation(QString str);
+    void getMessage(QString account,QJsonObject json);
+    void getHistoryMessage();
+
 
 private:
     //套接字、ip、端口、缓冲区
@@ -64,7 +70,7 @@ private:
 
     //自动重连定时器
     QTimer* timer=nullptr;
-    QTimer* readTimer=nullptr;
+    //QTimer* readTimer=nullptr;
     static int num;
 };
 

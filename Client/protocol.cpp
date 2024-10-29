@@ -5,6 +5,7 @@ bool Protocol::isFirstLogin = false;
 bool Protocol::isRemember = false;
 bool Protocol::isAutoLogin =false;
 bool Protocol::isConnecting = false;
+bool Protocol::isLogin = false;
 QString Protocol::workPath = "";
 QString Protocol::allUserPath = "";
 
@@ -95,10 +96,12 @@ void Protocol::initLoginUserInfo(QString account, QString pwd,qint64 lastLoginTi
 void Protocol::initUserInfo(QJsonObject json)
 {
     //设置登录的用户数据
-    if(json.value("headPhoto").toString()=="")
-        userHeadShot=DefalutPixmap;
-    else
-        userHeadShot=allUserPath+"/"+json.value("headPhoto").toString(); //登录账号头像
+//    if(json.value("headPhoto").toString()=="")
+//        userHeadShot=DefaultPixmap;
+//    else
+        //userHeadShot=allUserPath+"/"+json.value("headPhoto").toString(); //登录账号头像
+    //userHeadShot只保存文件名和后缀，不保存路径，若为空，在使用的地方替换为默认照片
+    userHeadShot=json.value("headPhoto").toString();
     userName=json.value("userName").toString(); //昵称
     signature=json.value("signature").toString(); //个性签名
     sex=json.value("sex").toString();//性别

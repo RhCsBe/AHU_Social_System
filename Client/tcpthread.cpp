@@ -13,37 +13,46 @@ void TcpThread::connectServer()
     if(!socket)
     {
         socket=new QTcpSocket(this);
+        //连接成功处理
         connect(socket,&QTcpSocket::connected,this,[&](){
             Protocol::isConnecting=true;
             qDebug()<<"连接成功";
         });
+        //连接断开处理
         connect(socket,&QTcpSocket::disconnected,this,[&](){
             Protocol::isConnecting=false;
-            //socket->close();
-            qDebug()<<"连接失败";
+            socket->close();//清除写缓冲区
+            startAutoConnet();//开启自动重连
+            qDebug()<<"连接断开";
         });
+        //数据到达处理
         connect(socket,&QTcpSocket::readyRead,this,&TcpThread::getData,Qt::QueuedConnection);
         qDebug()<<"等待连接";
     }
-    readTimer=new QTimer(this);
-    connect(readTimer,&QTimer::timeout,this,[&](){emit socket->readyRead();});
-    //readTimer->start(1000);
     socket->connectToHost(address,port);
+    //如果连接超时开启自动重连
+    if(!socket->waitForConnected(3000))
+    {
+        qDebug()<<"连接超时，开启自动重连";
+        startAutoConnet();
+    }
 }
 
 void TcpThread::autoConnect()
 {
+    socket->connectToHost(address,port);
+    if(socket->waitForConnected(1000))
+    {
+        timer->stop();
+    }
+}
+
+void TcpThread::startAutoConnet()
+{
     if(!timer)
     {
         timer=new QTimer(this);
-        connect(timer,&QTimer::timeout,this,[&](){
-            connectServer();
-            socket->waitForConnected(1000);
-            if(Protocol::isConnecting)
-            {
-                timer->stop();
-            }
-        });
+        connect(timer,&QTimer::timeout,this,&TcpThread::autoConnect);
     }
     timer->start(5000);
 }
@@ -69,6 +78,7 @@ void TcpThread::sendToServer(QByteArray jsonData, QString fileName, int type, in
 //        }
 //    }
 
+    //json数据包不为空则发送json数据
     if(jsonData.size() != 0)
     {
         sendJson(jsonData);
@@ -144,13 +154,20 @@ void TcpThread::sendFile(QString fileName, QString sendToAccount, int type)
 
 void TcpThread::sendJson(QByteArray jsonData)
 {
+    //创建json数据包并绑定输入流
     QByteArray dataArray;
     QDataStream out(&dataArray,QFile::WriteOnly);
+
+    //写入json文件标志位，置空符，数据包大小
     out<<JsonDataHead;
     out<<qint16(0);
     out<<jsonData.size();
+
+    //写入json数据，并把数据包大小补全
     dataArray.append(jsonData);
     dataArray.resize(BufferSize);
+
+    //发送数据，并阻塞等待
     socket->write(dataArray);
     socket->waitForBytesWritten();
     //QMessageBox::information(nullptr,"提示","客户端发送数据成功");
@@ -181,7 +198,7 @@ void TcpThread::getData()
                 mergeDataPackage(dataBuffer.left(BufferSize));
                 dataBuffer.remove(0,BufferSize);
                 //QByteArray的remove函数返回值是修改过后的字节序列，不是裁剪的片段，所以会出现数据缺失和错位的现象
-                qDebug()<<"BufferSize:"<<dataBuffer.size();
+                //qDebug()<<"BufferSize:"<<dataBuffer.size();
                 //mergeDataPackage(dataBuffer.remove(0,BufferSize));
                 //qDebug()<<"BufferSize:"<<dataBuffer.size();
             }
@@ -208,19 +225,19 @@ void TcpThread::getData()
 void TcpThread::mergeDataPackage(QByteArray dataArray)
 {
     num++;
-    qDebug()<<"num:"<<num;
+    //qDebug()<<"num:"<<num;
     QDataStream fileHead(&dataArray,QFile::ReadOnly);
     FileType fileType;
     qint16 space;
     int packetSize;
     fileHead>>fileType>>space>>packetSize;
     dataArray.remove(0,10);
-    qDebug()<<"fileType:"<<FileType(fileType);
+    //qDebug()<<"fileType:"<<FileType(fileType);
     switch (fileType)
     {
     case JsonDataHead:
         //json数据可以直接解析
-        qDebug()<<"收到json数据";
+        //qDebug()<<"收到json数据";
         parseMessage(dataArray.left(packetSize));
         break;
     case FileInfoHead:
@@ -233,7 +250,7 @@ void TcpThread::mergeDataPackage(QByteArray dataArray)
             readFile>>type>>fileSize>>fileName>>sendToAccount;
             this->fileSize=fileSize;
             this->nowFileSize=0;
-            qDebug()<<"type:"<<type;
+            //qDebug()<<"type:"<<type;
             switch(type)
             {
                 case LoginAccount://接收登录数据
@@ -252,6 +269,11 @@ void TcpThread::mergeDataPackage(QByteArray dataArray)
                             qDebug()<<"文件夹"+Protocol::getUserAccount()+"/FileRecv"<<"创建失败";
                             return;
                         }
+                        if(!dir.mkdir(Protocol::getUserPath()+"/message"))
+                        {
+                            qDebug()<<"文件夹"+Protocol::getUserAccount()+"/message"<<"创建失败";
+                            return;
+                        }
                     }
                     file.setFileName(Protocol::getUserPath()+"/"+fileName);
                     qDebug()<<"fileName"<<file.fileName();
@@ -267,8 +289,27 @@ void TcpThread::mergeDataPackage(QByteArray dataArray)
                     file.setFileName(Protocol::getAllUserPath()+"/"+fileName);
                     if(!file.open(QFile::WriteOnly))
                     {
-                    qDebug()<<"文件"<<fileName<<"打开失败";
-                    return;
+                        qDebug()<<"文件"<<fileName<<"打开失败";
+                        return;
+                    }
+                    break;
+                }
+                case HistoryMessage://接收历史消息数据
+                {
+
+                    QDir dir;
+                    //不存在historyMessage文件夹则创建
+                    if(!dir.exists(Protocol::getUserPath()+"/historyMessage"))
+                        dir.mkdir(Protocol::getUserPath()+"/historyMessage");
+                    //不存在对应时间戳文件夹则创建
+                    if(!dir.exists(Protocol::getUserPath()+"/historyMessage/"+sendToAccount))
+                        dir.mkdir(Protocol::getUserPath()+"/historyMessage/"+sendToAccount);
+                    //设置文件路径
+                    file.setFileName(Protocol::getUserPath()+"/historyMessage/"+sendToAccount+"/"+fileName);
+                    if(!file.open(QFile::WriteOnly))
+                    {
+                        qDebug()<<"文件"<<fileName<<"打开失败";
+                        return;
                     }
                     break;
                 }
@@ -312,6 +353,29 @@ void TcpThread::parseMessage(QByteArray dataArray)
             }
             break;
         }
+        case SendMessage:
+        {
+            QString account=jsonData.value("sender").toString();
+            //将收到的消息转成json格式
+            QJsonObject message;
+            message.insert("account",account);
+            message.insert("message",jsonData.value("message").toString());
+            message.insert("time",jsonData.value("time").toString());
+            //qDebug()<<"tcp收到信息："<<message.value("message").toString();
+            //将数据发送给主界面
+            emit getMessage(account,message);
+            break;
+        }
+        case HistoryMessage:
+        {
+            emit getHistoryMessage();
+            break;
+        }
+        case Registration:
+        {
+            emit registerResult(jsonData.value("result").toString().toInt());
+            break;
+        }
         default:
             break;
     }
@@ -327,6 +391,7 @@ void TcpThread::getJsonData(int type, QString account, QString targetAccount, QS
     switch(type)
     {
         case LoginAccount:
+        {
             data.insert("account",account);
             data.insert("password",message);
             data.insert("lastLoginTime",QString::number(Protocol::getLastLoginTime()));
@@ -335,6 +400,33 @@ void TcpThread::getJsonData(int type, QString account, QString targetAccount, QS
             data.insert("autoLogin",Protocol::isAutoLogin);
             data.insert("isFirstLogin",Protocol::isFirstLogin);
             break;
+        }
+        case SendMessage:
+        {
+            data.insert("time",QString::number(QDateTime::currentMSecsSinceEpoch()));
+            data.insert("sender",account);
+            data.insert("receiver",targetAccount);
+            data.insert("message",message);
+            data.insert("file",messageType);
+            data.insert("type",type);
+            //qDebug()<<"tcp线程发送："<<message;
+
+            //因为时间戳在这里生成，所以在这里对数据进行截取存储
+            QJsonObject json;
+            json.insert("time",data.value("time").toString());
+            json.insert("account",account);
+            json.insert("message",message);
+            emit getMessage(targetAccount,json);
+            //qDebug()<<"tcp已收到数据";
+            break;
+        }
+        case Registration:
+        {
+            data.insert("id",account);//学号/工号
+            data.insert("identity",messageType);//身份
+            data.insert("message",message);//除了学号/工号和身份外的所有信息
+            break;
+        }
         default:
             break;
     }

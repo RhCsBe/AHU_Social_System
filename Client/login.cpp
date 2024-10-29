@@ -50,13 +50,43 @@ void Login::setStyle()
 
 void Login::setConnect()
 {
+    //为最小化按钮和关闭按钮绑定处理函数
     connect(ui->min_btn,&QToolButton::clicked,this,[&](){this->showMinimized();});
     connect(ui->close_btn,&QToolButton::clicked,this,[&](){this->close();});
+
+    //创建注册界面并绑定处理函数
+    connect(ui->make_account,&QPushButton::clicked,this,[&](){
+        if(registerWindow)
+        {
+            //qDebug()<<"显示register";
+            //直接显示三件套
+            registerWindow->show();
+            registerWindow->showNormal();
+            registerWindow->activateWindow();
+        }
+        else
+        {
+            //qDebug()<<"创建register";
+            registerWindow=new Register();
+            //为注册界面绑定处理函数
+            connect(registerWindow,&Register::userRegister,this,[&](QString account,QString message,QString messageType){
+                emit userRegister(account,message,messageType);
+            });
+            //注册窗口销毁时记得将指针置空，防止越界访问导致系统崩溃
+            connect(registerWindow,&Register::destroyed,this,[&](){registerWindow=nullptr;});
+            registerWindow->show();
+        }
+    });
+    //登录按钮处理
     connect(ui->login,&QPushButton::clicked,this,[&](){
         if(this->matchRegExp())
         {
-            //qDebug()<<"匹配成功";
-            qint64 lastLoginTime=0;
+            if(!Protocol::isConnecting)
+            {
+                ElaMessageBar::error(ElaMessageBarType::BottomRight,"Error","登录超时，请检查您的网络或者本地防火墙设置",3000,this);
+                return;
+            }
+            qint64 lastLoginTime=-1;
             qint64 loginTime=QDateTime::currentDateTime().toMSecsSinceEpoch();
             QJsonObject json=userList.value(ui->account->text());
             if(!json.isEmpty())
@@ -77,7 +107,7 @@ void Login::setConnect()
         }
         else
         {
-            //qDebug()<<"匹配失败";
+            ElaMessageBar::warning(ElaMessageBarType::BottomLeft,"Warning","账号或密码不符合要求",3000,this);
         }
     });
     //设置当账号发生改变时，若找不到历史记录，则将密码清空，头像设置成默认头像，若匹配上历史记录，则设置成历史记录
@@ -116,7 +146,7 @@ void Login::initUserData()
     {
         //根据上次登录时间确定选中的账号
         QString selectAccount="";
-        int maxNumber=-1;
+        qint64 maxNumber=-1;
         //遍历获取所有的login信息，并存入userList
         for(auto user:userList)
         {
@@ -130,9 +160,9 @@ void Login::initUserData()
             QByteArray data=file.readAll();
             file.close();
             QJsonObject json=QJsonDocument::fromJson(data).object();
-            if(json.value("lastLoginTime").toInt()>maxNumber)
+            if(json.value("lastLoginTime").toString().toLongLong()>maxNumber)
             {
-                maxNumber=json.value("lastLoginTime").toInt();
+                maxNumber=json.value("lastLoginTime").toString().toLongLong();
                 selectAccount=user;
             }
             this->userList.insert(user,json);
@@ -153,7 +183,7 @@ void Login::initLoginData(QJsonObject json)
     password=json.value("password").toString();
     //用户头像为空则设置为默认头像
     if(json.value("headPhoto").toString()=="")
-        headPhoto=DefalutPixmap;
+        headPhoto=DefaultPixmap;
     else
         headPhoto=Protocol::getAllUserPath()+"/"+json.value("headPhoto").toString();
     remember=json.value("remember").toBool();
@@ -173,6 +203,7 @@ void Login::initComboBox()
 {
     //这垃圾样式表写不下去了，然后自己组了一个，可以实现类似功能
     //就是使用QToolButton代替QComboBox::down-arrow，点击时触发QComboBox对应处理
+    ui->down_btn->setIcon(QIcon(":/photo/xiajiantou.png"));
     connect(ui->down_btn,&QToolButton::clicked,this,[&](){
         down=!down;
         if(down)
@@ -202,6 +233,7 @@ void Login::initComboBox()
 
 void Login::setHeadPhoto(QString str)
 {
+    //qDebug()<<"headPhoto:"<<str;
     //因为给QLabel设置圆角无法对设置的图片直接进行裁剪显示，还是会显示原图，达不到圆形头像的效果，所以不能直接等比缩放显示
     //ui->head_photo->setPixmap(QPixmap(str).scaled(ui->head_photo->size().width(),ui->head_photo->size().height(), Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
@@ -300,7 +332,23 @@ bool Login::matchRegExp()
     QRegularExpression accountExp("[E|T]\\d{8}");
     //密码为8-16位数字字母组合
     QRegularExpression passwordExp("[A-Z|a-z|0-9]{8,16}");
+    //ElaMessageBar::information(ElaMessageBarType::PositionPolicy::BottomRight,"通知","开始进行正则匹配",5000,this);
     return accountExp.match(ui->account->text()).hasMatch()&&passwordExp.match(ui->password->text()).hasMatch();
+}
+
+void Login::registerResult(int result)
+{
+    //注册界面指针不为空则显示注册结果
+    if(registerWindow)
+        registerWindow->regiterResult(result);
+}
+
+void Login::loginResult(bool result)
+{
+    if(!result)
+    {
+        ElaMessageBar::error(ElaMessageBarType::BottomRight,"error","账号或密码错误",3000,this);
+    }
 }
 
 

@@ -5,6 +5,7 @@
 #include <QObject>
 #include "protocol.h"
 #include <algorithm>
+#include <cmath>
 
 class ChatWindowDelegate : public QStyledItemDelegate
 {

@@ -22,6 +22,7 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         rect.setY(option.rect.y());
         rect.setWidth(option.rect.width()-1);
         rect.setHeight(option.rect.height()-1);
+        //qDebug()<<"选项高度："<<option.rect.height();
 
         //读取数据
         MessageItem message=index.data(Qt::UserRole+1).value<MessageItem>();
@@ -36,11 +37,14 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
         //绘制时间
         QDateTime time=QDateTime::fromMSecsSinceEpoch(message.time);
-        QDateTime nowTime=QDateTime::currentDateTimeUtc();
+        //直接使用QDateTime::currentDateTimeUtc()获取的时间比东八区的慢几个小时
+        //QDateTime::fromMSecsSinceEpoch的默认时区改成了本地
+        QDateTime nowTime=QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch());
+        //QDateTime nowTime=QDateTime::currentDateTimeUtc();
         QString str="";
         if(time.date().year()==nowTime.date().year()&&time.date().month()==nowTime.date().month()&&time.date().day()==nowTime.date().day())
         {
-            str=time.toString("h:mm:ss");
+            str=time.time().toString("h:mm:ss");
         }
         else
         {
@@ -48,7 +52,23 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         }
         painter->setPen(QPen("#808A87"));
         painter->setFont(QFont("Microsoft YaHei", 10));//设置字体
-        painter->drawText(timeRect,Qt::AlignCenter|Qt::AlignVCenter,str);
+        //如果上一条信息的时间差不超过3分钟且不是第一条信息，则不绘制时间
+        QModelIndex lastIndex=index.model()->index(index.row()-1,0);
+        if(lastIndex.isValid())
+        {
+            int time1=index.data(Qt::UserRole+1).value<MessageItem>().time;
+            int time2=lastIndex.data(Qt::UserRole+1).value<MessageItem>().time;
+            if(std::abs(time1-time2)>=3*60*1000)
+                painter->drawText(timeRect,Qt::AlignCenter|Qt::AlignVCenter,str);
+            else
+                //不绘制时间记得将timeRect的高度设置为零，否则会影响别的参数
+                timeRect.setHeight(0);
+        }
+        else
+        {
+            painter->drawText(timeRect,Qt::AlignCenter|Qt::AlignVCenter,str);
+        }
+
 
         //根据账号判断绘图方向
         if(message.account==Protocol::getUserAccount())
@@ -72,7 +92,7 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         //绘制头像
         str=message.headPhoto;
         if(str.isEmpty())
-            str=DefalutPixmap;
+            str=DefaultPixmap;
         else
             str=Protocol::getAllUserPath()+"/"+str;
         QPixmap headPhoto=Protocol::createHeadShot(str,iconWidth);
@@ -91,10 +111,10 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         QFontMetrics metrics(QFont("Microsoft YaHei", textHeight-2*fontSpace));//字体度量
         QStringList list=message.message.split("\n");
         //int fontNum=textRect.width()/metrics.width("黎");//一行最大字数
-        qDebug()<<"list:"<<list.size();
+        //qDebug()<<"list:"<<list.size();
         for(auto i:list)
         {
-            qDebug()<<"str:"<<i;
+            //qDebug()<<"str:"<<i;
             //qDebug()<<textRect;
             //qDebug()<<i;
             //如果单行字数超出限制，要分行绘制
@@ -153,6 +173,8 @@ QWidget *ChatWindowDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
 QSize ChatWindowDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    //qDebug()<<"宽度："<<option.rect.width()<<"\t内容："<<index.data(Qt::UserRole+1).value<MessageItem>().message;
+    //qDebug()<<"高度："<<option.rect.height()<<"设置的高度："<<getItemHeight(option,index);
     return QSize(option.rect.width(),getItemHeight(option,index));
     //return QSize(option.rect.width(),getItemHeight(option,index));
 }
@@ -179,7 +201,20 @@ int ChatWindowDelegate::getBubbleWidth(const QStyleOptionViewItem &option, const
 int ChatWindowDelegate::getItemHeight(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     //总高度=item上下留白+时间高度+气泡上下留白+文本高度
-    int totalHeight=timeHeight+2*(itemSpace+bubbleSpace);
+    int totalHeight=2*(itemSpace+bubbleSpace);
+    //判断如果与上一条信息的时间不超过3分钟且不是第一条信息，则不添加时间高度
+    QModelIndex lastIndex=index.model()->index(index.row()-1,0);
+    if(lastIndex.isValid())
+    {
+        int time1=index.data(Qt::UserRole+1).value<MessageItem>().time;
+        int time2=lastIndex.data(Qt::UserRole+1).value<MessageItem>().time;
+        if(std::abs(time1-time2)>=3*60*1000)
+            totalHeight+=timeHeight;
+    }
+    else
+    {
+        totalHeight+=timeHeight;
+    }
     totalHeight+=getTextRows(option,index)*textHeight;
     return totalHeight;
 }
@@ -215,6 +250,13 @@ int ChatWindowDelegate::getValidStringLength(QString str, int pos, double width)
     //代理绑定后，view不知道发生了什么，会有一组稳定的option.rect().width()的值是0，就导致传进来的width是一个负数，
     //然后在计算item高度的函数中陷入死循环，且之后option.rect().width()还会出现稳定的波动，原因不明
     //所以在这要设置一个判断，过滤掉这组垃圾数据，但是为什么这个垃圾数据这么稳定，要不是老子没空，我一定要搞清楚它的调用机制和产生原因
+
+    //补充：经过追踪代理的调用的顺序，view在更换代理后首先会调用代理的sizeHint对所有的数据项进行设置，
+    //然后对第一项再次进行设置，此时将第一项的宽高设置为零，就是在这出现了这个垃圾数据，
+    //接着开始正式将每一项都设置大小并调用绘图函数进行绘，依旧不清楚前两步有什么屌用
+    //而且在每次在代理重绘之前，视图会将option.rect().height()的返回值设置为一个内部维护的数据，反正不是你设置的那个
+    //必须要经过你在sizeHint中的修改，才能在paint中的option.rect().height()拿到你设置的数据，什么牛马机制
+    //简单来说就是，你建议归你建议，你说一次我改一次，到下次你不说了，那我就用我内部维护的这个值
     if(width<=0)
         width=500;
     QFont font("Microsoft YaHei",textHeight-2*fontSpace);//字体
