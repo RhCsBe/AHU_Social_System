@@ -15,15 +15,11 @@ int main(int argc, char *argv[])
     Protocol::createWorkPath();
     //启动所有界面
     MainInterface w;
-    w.show();
+    //w.show();
     qDebug()<<QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch());
     qDebug()<<QDateTime::currentDateTimeUtc();
     qDebug()<<QDateTime::currentDateTime();
-    //(new Register)->show();
-    Personal person;
-    person.show();
 
-    //w.hide();
     //QApplication::setQuitOnLastWindowClosed(false);
     return a.exec();
 }

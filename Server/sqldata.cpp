@@ -23,7 +23,7 @@ void SqlData::connectDataBase()
     }
 }
 
-bool SqlData::searchUser(QString account, QString password)
+bool SqlData::judgeUserExist(QString account, QString password)
 {
     QString table;
     if(account[0]=='T')
@@ -211,15 +211,42 @@ QJsonArray SqlData::getFriendDataFile(QString account)
                 json.insert("location",sql.value("location").toString());
                 json.insert("bloodType",sql.value("blood_type").toString());
                 json.insert("college",sql.value("college").toString());
-                if(table=="teacher_user_data")
+                if(table=="student_user_data")
                     json.insert("profession",sql.value("profession").toString());
-                //json不提供长整形的存储和转换，所以要将长整形转成字符串存储在json中
                 json.insert("headPhoto",sql.value("head_photo").toString());
             }
             jsonArray.append(json);
         }
     }
     return jsonArray;
+}
+
+QByteArray SqlData::getGroupDataFile(QString account,QString& headPhoto)
+{
+    //根据账号检索群聊信息
+    QString str=QString::asprintf("select all_groups from relation where account = '%1';").arg(account);
+    QSqlQuery sql(db);
+    QJsonArray jsonArray;
+    if(sql.exec(str))
+    {
+        sql.next();
+        QString allGroups=sql.value("all_groups").toString();
+
+        //friends为空直接返回jsonArray，你妈的为什么空串还能分割，什么牛马写的函数
+        if(allGroups.isEmpty())
+        {
+            return QJsonDocument(jsonArray).toJson();
+        }
+        QStringList list=allGroups.split(";");
+        qDebug()<<"friends:"<<allGroups;
+        qDebug()<<"list_num:"<<list.size();
+        //遍历好友
+        for(auto i:list)
+        {
+            jsonArray.append(askForGroupData(i,headPhoto));
+        }
+    }
+    return QJsonDocument(jsonArray).toJson();
 }
 
 QStringList SqlData::getAllFriendHeadPhoto(QString account)
@@ -299,6 +326,262 @@ qint64 SqlData::getUserLoginTime(QString account)
     }
     else
         return -1;
+}
+
+QString SqlData::getUserName(QString account)
+{
+    QString userName;
+    QString table;
+    if(account[0]=='T')
+    {
+        table="teacher_user_data";
+    }
+    else
+    {
+        table="student_user_data";
+    }
+    QString str=QString::asprintf("select username from %1 where account= '%2';").arg(table).arg(account);
+    QSqlQuery sql(db);
+    if(sql.exec(str))
+    {
+        sql.next();
+        userName=sql.value("username").toString();
+    }
+    return userName;
+}
+
+QString SqlData::getGroupName(QString account)
+{
+    QString groupName;
+    QString str=QString::asprintf("select username from groups_member where account= '%1';").arg(account);
+    QSqlQuery sql(db);
+    if(sql.exec(str))
+    {
+        sql.next();
+        groupName=sql.value("username").toString();
+    }
+    return groupName;
+}
+
+QStringList SqlData::getAllFriend(QString account)
+{
+    QString str=QString::asprintf("select friends from relation where account ='%1';").arg(account);
+    QStringList result;
+    QSqlQuery sql(db);
+    if(sql.exec(str))
+    {
+        if(sql.next())
+        {
+            QString friends=sql.value("friends").toString();
+            if(!friends.isEmpty())
+            {
+                result=friends.split(";");
+            }
+        }
+    }
+    return result;
+}
+
+QStringList SqlData::getAllMember(QString account)
+{
+    QString str=QString::asprintf("select host_account, member from groups_member where account ='%1';").arg(account);
+    QStringList result;
+    QSqlQuery sql(db);
+    if(sql.exec(str))
+    {
+        if(sql.next())
+        {
+            QString member=sql.value("member").toString();
+            if(!member.isEmpty())
+            {
+                result=member.split(";");
+            }
+            QString hostAccount=sql.value("host_account").toString();
+            if(!hostAccount.isEmpty())
+            {
+                result.append(hostAccount);
+            }
+        }
+    }
+    return result;
+}
+
+QString SqlData::getGroupHeadPhoto(QString account)
+{
+    QString headPhoto;
+    QString str=QString::asprintf("select head_photo from groups_member where account= '%1';").arg(account);
+    QSqlQuery sql(db);
+    if(sql.exec(str))
+    {
+        sql.next();
+        headPhoto=sql.value("head_photo").toString();
+    }
+    return headPhoto;
+}
+
+QString SqlData::getGroupHostAccount(QString account)
+{
+    QString str=QString::asprintf("select host_account from groups_member where account = '%1';").arg(account);
+    QSqlQuery sql(db);
+    sql.exec(str);
+    sql.next();
+    return sql.value("host_account").toString();
+}
+
+QByteArray SqlData::searchUser(QString condition,QString& headPhoto)
+{
+    QString str1="select * from student_user_data where account like '%"+condition+"%' or username like '%"+condition+"%';";
+    QString str2="select * from teacher_user_data where account like '%"+condition+"%' or username like '%"+condition+"%';";
+    qDebug()<<"str1:"<<str1;
+    qDebug()<<"str2:"<<str2;
+    QSqlQuery sql(db);
+    QJsonArray array;
+    sql.exec(str1);
+    while(sql.next())
+    {
+        QJsonObject json;
+        json.insert("account",sql.value("account").toString());
+        json.insert("userName",sql.value("username").toString());
+        json.insert("signature",sql.value("signature").toString());
+        json.insert("sex",sql.value("sex").toString());
+        json.insert("age",sql.value("age").toInt());
+        json.insert("birthday",sql.value("birthday").toString());
+        json.insert("location",sql.value("location").toString());
+        json.insert("bloodType",sql.value("blood_type").toString());
+        json.insert("college",sql.value("college").toString());
+        json.insert("profession",sql.value("profession").toString());
+        json.insert("headPhoto",sql.value("head_photo").toString());
+        array.append(json);
+
+        //添加头像名单(不为空则添加)
+        if(!sql.value("head_photo").toString().isEmpty())
+        {
+            headPhoto+=Protocol::getAllUserPath()+"/"+sql.value("head_photo").toString()+"?";
+        }
+    }
+    sql.exec(str2);
+    while(sql.next())
+    {
+        QJsonObject json;
+        json.insert("account",sql.value("account").toString());
+        json.insert("userName",sql.value("username").toString());
+        json.insert("signature",sql.value("signature").toString());
+        json.insert("sex",sql.value("sex").toString());
+        json.insert("age",sql.value("age").toInt());
+        json.insert("birthday",sql.value("birthday").toString());
+        json.insert("location",sql.value("location").toString());
+        json.insert("bloodType",sql.value("blood_type").toString());
+        json.insert("college",sql.value("college").toString());
+        json.insert("headPhoto",sql.value("head_photo").toString());
+        array.append(json);
+
+        //添加头像名单(不为空则添加)
+        if(!sql.value("head_photo").toString().isEmpty())
+        {
+            headPhoto+=Protocol::getAllUserPath()+"/"+sql.value("head_photo").toString()+"?";
+        }
+    }
+    return QJsonDocument(array).toJson();
+}
+
+QByteArray SqlData::searchGroup(QString condition,QString& headPhoto)
+{
+    QString str="select * from groups_member where account like '%"+condition+"%' or username like '%"+condition+"%';";
+    QSqlQuery sql(db);
+    QJsonArray array;
+    sql.exec(str);
+    while(sql.next())
+    {
+        QJsonObject json;
+        json.insert("account",sql.value("account").toString());
+        json.insert("userName",sql.value("username").toString());
+        json.insert("hostAccount",sql.value("host_account").toString());
+        json.insert("signature",sql.value("signature").toString());
+        json.insert("headPhoto",sql.value("head_photo").toString());
+        array.append(json);
+
+        //添加头像名单(不为空则添加)
+        if(!sql.value("head_photo").toString().isEmpty())
+        {
+            headPhoto+=Protocol::getAllUserPath()+"/"+sql.value("head_photo").toString()+"?";
+        }
+    }
+    return QJsonDocument(array).toJson();
+}
+
+QJsonObject SqlData::askForUserData(QString account,QString& headPhoto)
+{
+    QString table;
+    if(account[0]=='T')
+    {
+        table="teacher_user_data";
+    }
+    else
+    {
+        table="student_user_data";
+    }
+    QString str=QString::asprintf("select * from %1 where account = '%2';").arg(table).arg(account);
+    QSqlQuery sql(db);
+    QJsonObject json;
+    sql.exec(str);
+    if(sql.next())
+    {
+        json.insert("account",sql.value("account").toString());
+        json.insert("userName",sql.value("username").toString());
+        json.insert("signature",sql.value("signature").toString());
+        json.insert("sex",sql.value("sex").toString());
+        json.insert("age",sql.value("age").toInt());
+        json.insert("birthday",sql.value("birthday").toString());
+        json.insert("location",sql.value("location").toString());
+        json.insert("bloodType",sql.value("blood_type").toString());
+        json.insert("college",sql.value("college").toString());
+        if(table=="student_user_data")
+            json.insert("profession",sql.value("profession").toString());
+        json.insert("headPhoto",sql.value("head_photo").toString());
+        //添加头像名单(不为空则添加)
+        if(!sql.value("head_photo").toString().isEmpty())
+        {
+            headPhoto+=Protocol::getAllUserPath()+"/"+sql.value("head_photo").toString()+"?";
+        }
+    }
+    return json;
+}
+
+QJsonObject SqlData::askForGroupData(QString account,QString& headPhoto)
+{
+    QString str=QString::asprintf("select * from groups_member where account = '%1';").arg(account);
+    QSqlQuery sql(db);
+    QJsonObject json;
+    sql.exec(str);
+    if(sql.next())
+    {
+        json.insert("account",sql.value("account").toString());
+        json.insert("userName",sql.value("username").toString());
+        json.insert("hostAccount",sql.value("host_account").toString());
+        json.insert("signature",sql.value("signature").toString());
+        json.insert("headPhoto",sql.value("head_photo").toString());
+
+        //添加头像名单(不为空则添加)
+        if(!sql.value("head_photo").toString().isEmpty())
+        {
+            headPhoto+=Protocol::getAllUserPath()+"/"+sql.value("head_photo").toString()+"?";
+        }
+
+        //添加群主个人信息
+        QJsonArray array;
+        array.append(askForUserData(sql.value("host_account").toString(),headPhoto));
+        //循环添加成员信息
+        if(!sql.value("member").toString().isEmpty())
+        {
+            QStringList list=sql.value("member").toString().split(";");
+            for(QString string:list)
+            {
+                array.append(askForUserData(string,headPhoto));
+            }
+        }
+        json.insert("member",array);
+    }
+    return json;
 }
 
 bool SqlData::isUserOnLine(QString account)
@@ -390,13 +673,271 @@ void SqlData::closeDataBase()
     }
 }
 
+void SqlData::addFriend(QString account_1,QString account_2,qint64 updateTime)
+{
+    //确定两人所属的表
+//    QString table_1,table_2;
+//    if(account_1[0]=='T')
+//    {
+//        table_1="teacher_user_data";
+//    }
+//    else
+//    {
+//        table_1="student_user_data";
+//    }
+//    if(account_2[0]=='T')
+//    {
+//        table_2="teacher_user_data";
+//    }
+//    else
+//    {
+//        table_2="student_user_data";
+//    }
+    QSqlQuery sql(db);
+
+    //查找用户1的数据
+    QString str="select friends from relation where account = '"+account_1+"' and friends not like '%"+account_2+"%';";
+    qDebug()<<str;
+    sql.exec(str);
+    if(sql.next())
+    {
+        //不存在则添加
+        QString friends=sql.value("friends").toString();
+        if(friends.isEmpty())
+        {
+            friends+=account_2;
+        }
+        else
+        {
+            friends+=";"+account_2;
+        }
+        str="update relation set friends = '"+friends+"' , update_time = "+ QString::number(updateTime) +" where account ='"+account_1+"';";
+        sql.exec(str);
+    }
+
+    //查找用户2的数据
+    str="select friends from relation where account = '"+account_2+"' and friends not like '%"+account_1+"%';";
+    sql.exec(str);
+    if(sql.next())
+    {
+        //不存在则添加
+        QString friends=sql.value("friends").toString();
+        if(friends.isEmpty())
+        {
+            friends+=account_1;
+        }
+        else
+        {
+            friends+=";"+account_1;
+        }
+        str="update relation set friends = '"+friends+"' , update_time = "+ QString::number(updateTime) +" where account = '"+account_2+"';";
+        sql.exec(str);
+    }
+}
+
+void SqlData::joinGroup(QString account, QString group,qint64 updateTime)
+{
+//    QString table;
+//    if(account[0]=='T')
+//    {
+//        table="teacher_user_data";
+//    }
+//    else
+//    {
+//        table="student_user_data";
+//    }
+
+    QSqlQuery sql(db);
+
+    //修改用户的联系人信息
+    QString str="select all_groups from relation where account = '"+account+"' and all_groups not like '%"+group+"%';";
+    sql.exec(str);
+    if(sql.next())
+    {
+        QString allGroups=sql.value("all_groups").toString();
+        if(allGroups.isEmpty())
+        {
+            allGroups+=group;
+        }
+        else
+        {
+            allGroups+=";"+group;
+        }
+        str="update relation set all_groups = '"+allGroups+"' , update_time = "+ QString::number(updateTime) +" where account = '"+account+"';";
+        sql.exec(str);
+    }
+
+    //修改群聊信息
+    str="select member from groups_member where account = '"+group+"' and member not like '%"+account+"%';";
+    sql.exec(str);
+    if(sql.next())
+    {
+        QString member=sql.value("member").toString();
+        if(member.isEmpty())
+        {
+            member+=account;
+        }
+        else
+        {
+            member+=";"+account;
+        }
+        str="update groups_member set member = '"+member+"' , update_time = "+ QString::number(updateTime) +" where account = '"+group+"';";
+        sql.exec(str);
+    }
+}
+
+QJsonObject SqlData::taskToAddFriend(QJsonObject json)
+{
+    QString account=json.value("sender").toString();
+    QJsonObject result;
+    result.insert("type",json.value("type").toInt());
+    result.insert("account",account);
+    result.insert("userName",getUserName(account));
+    result.insert("headPhoto",getUserHeadPhoto(account));
+    return result;
+}
+
+QJsonObject SqlData::taskToJoinGroup(QJsonObject json)
+{
+    QString account=json.value("sender").toString();
+    QString group=json.value("messageType").toString();
+    QJsonObject result;
+    result.insert("type",json.value("type").toInt());
+    result.insert("account",account);
+    result.insert("userName",getUserName(account));
+    result.insert("headPhoto",getUserHeadPhoto(account));
+    result.insert("groupAccount",group);
+    result.insert("groupName",getGroupName(group));
+    return result;
+}
+
+void SqlData::setRelationUpdateTime(QString account, qint64 updateTime)
+{
+    QString str=QString::asprintf("update relation set update_time = %1 where account ='%2';").arg(updateTime).arg(account);
+    QSqlQuery sql(db);
+    sql.exec(str);
+}
+
+QJsonObject SqlData::taskToSendDynamic(QJsonObject json)
+{
+    QString account=json.value("sender").toString();
+    QJsonObject result;
+    result.insert("type",json.value("type").toInt());
+    result.insert("account",account);
+    result.insert("userName",getUserName(account));
+    result.insert("headPhoto",getUserHeadPhoto(account));
+    result.insert("message",json.value("message").toString());
+    result.insert("time",json.value("time"));
+    return result;
+}
+
+bool SqlData::isGroupExist(QString account)
+{
+    QString str=QString::asprintf("select account from groups_member where account = '%1';").arg(account);
+    QSqlQuery sql(db);
+    sql.exec(str);
+    if(sql.next())
+        return true;
+    else
+        return false;
+}
+
+QString SqlData::createGroup(QString groupName, QString hostAccount,qint64 time)
+{
+    QString groupAccount="G";
+    qsrand(QDateTime::currentMSecsSinceEpoch());
+    int num=qrand()+100000000;
+    while(isGroupExist(groupAccount+QString::number(num).left(8)))
+    {
+        num++;
+    }
+    groupAccount+=QString::number(num).left(8);
+    QString str=QString::asprintf("insert into groups_member (account , username , host_account , update_time) values('%1','%2','%3',%4);")
+                      .arg(groupAccount).arg(groupName).arg(hostAccount).arg(time);
+    qDebug()<<str;
+    QSqlQuery sql(db);
+    sql.exec(str);
+    str=QString::asprintf("select all_groups from relation where account = '%1';").arg(hostAccount);
+    sql.exec(str);
+    if(sql.next())
+    {
+        QString groups=sql.value("all_groups").toString();
+        if(groups.isEmpty())
+        {
+            groups+=groupAccount;
+        }
+        else
+        {
+            groups+=";"+groupAccount;
+        }
+        str=QString::asprintf("update relation set all_groups = '%1' , update_time = %2 where account = '%3';")
+                  .arg(groups).arg(time).arg(hostAccount);
+        sql.exec(str);
+    }
+    return groupAccount;
+}
+
+void SqlData::modifyUserData(QString account, QJsonObject json)
+{
+    QString table,str;
+    if(account[0]=='T')
+    {
+        table="teacher_user_data";
+    }
+    else
+    {
+        table="student_user_data";
+    }
+    QString headPhoto=json.value("headPhoto").toString();
+    if(headPhoto.isEmpty())
+        headPhoto=getUserHeadPhoto(account);
+    if(account[0]=='E')
+    {
+        //数据顺序：用户名-》个性签名-》性别-》年龄-》生日-》血型-》位置-》学院-》专业(只有学生用户有专业信息)
+        str=QString::asprintf("update %1 set username = '%2' , signature = '%3' , sex = '%4' , age = %5 , birthday ='%6' , blood_type ='%7' , location = '%8' , college = '%9' , profession ='%10' , head_photo = '%11' ,update_time = %12 where account = '%13';")
+                .arg(table).arg(json.value("userName").toString())
+                .arg(json.value("signature").toString()).arg(json.value("sex").toString())
+                .arg(json.value("age").toInt()).arg(json.value("birthday").toString())
+                .arg(json.value("bloodType").toString()).arg(json.value("location").toString())
+                .arg(json.value("college").toString()).arg(json.value("profession").toString())
+                .arg(headPhoto)
+                .arg(json.value("updateTime").toString().toLongLong()).arg(account);
+    }
+    else
+    {
+        str=QString::asprintf("update %1 set username = '%2' , signature = '%3' , sex = '%4' , age = %5 , birthday ='%6' , blood_type ='%7' , location = '%8' , college = '%9' , head_photo = '%10' , update_time = %11 where account = '%12';")
+                  .arg(table).arg(json.value("userName").toString())
+                  .arg(json.value("signature").toString()).arg(json.value("sex").toString())
+                  .arg(json.value("age").toInt()).arg(json.value("birthday").toString())
+                  .arg(json.value("bloodType").toString()).arg(json.value("location").toString())
+                  .arg(json.value("college").toString())
+                  .arg(headPhoto)
+                  .arg(json.value("updateTime").toString().toLongLong()).arg(account);
+    }
+    QSqlQuery sql(db);
+    sql.exec(str);
+}
+
+void SqlData::modifyGroupData(QString account, QJsonObject json)
+{
+    QString headPhoto=json.value("headPhoto").toString();
+    if(headPhoto.isEmpty())
+        headPhoto=getGroupHeadPhoto(account);
+    QString str=QString::asprintf("update groups_member set username = '%1' , signature = '%2' , head_photo = '%3' , update_time = %4 where account = '%5';")
+                      .arg(json.value("userName").toString()).arg(json.value("signature").toString())
+                      .arg(headPhoto).arg(json.value("updateTime").toString().toLongLong())
+                      .arg(account);
+    QSqlQuery sql(db);
+    sql.exec(str);
+}
+
 bool SqlData::addMessageTask(QJsonObject json)
 {
-    QString str=QString::asprintf("insert into task (id,sender,receiver,message,file,type) values ("
-                       "%1,'%2','%3','%4','%5',%6);").arg(json.value("time").toString().toLongLong())
+    QString str=QString::asprintf("insert into task (id,sender,receiver,message,message_type,file,type) values ("
+                       "%1,'%2','%3','%4','%5','%6',%7 );").arg(json.value("time").toString().toLongLong())
                       .arg(json.value("sender").toString()).arg(json.value("receiver").toString())
-                      .arg(json.value("message").toString()).arg(json.value("file").toString())
-                      .arg(json.value("type").toInt());
+                      .arg(json.value("message").toString()).arg(json.value("messageType").toString())
+                      .arg(json.value("file").toString()).arg(json.value("type").toInt());
     QSqlQuery sql(db);
     if(sql.exec(str))
     {
@@ -448,6 +989,7 @@ bool SqlData::judgeUserRegistrationMessage(QString account, QString identity, QS
     QString str=QString::asprintf("select * from %1 where id = '%2' and name = '%3' and sex = '%4' "
                       "and college ='%5';").arg(table).arg(account).arg(name).arg(sex)
                       .arg(college);
+    qDebug()<<"注册str："<<str;
     QSqlQuery sql(db);
     //执行失败返回false
     if(sql.exec(str))
@@ -561,7 +1103,7 @@ void SqlData::userRegister(QString account, QString password)
 QVector<QJsonObject> SqlData::sendMessageTask(QString account)
 {
     //以降序存储messageTask，即先收到的消息先发送，后收到的后发送
-    QString str=QString::asprintf("select * from task where receiver = '%1' and type = %2 order by id ASC;").arg(account).arg(InfoType::SendMessage);
+    QString str=QString::asprintf("select * from task where receiver = '%1' order by id ASC;").arg(account);
     QVector<QJsonObject>jsonVector;
     QSqlQuery sql(db);
     if(sql.exec(str))
@@ -573,6 +1115,7 @@ QVector<QJsonObject> SqlData::sendMessageTask(QString account)
             json.insert("sender",sql.value("sender").toString());
             json.insert("receiver",sql.value("receiver").toString());
             json.insert("message",sql.value("message").toString());
+            json.insert("messageType",sql.value("message_type").toString());
             json.insert("file",sql.value("file").toString());
             json.insert("type",sql.value("type").toInt());
             jsonVector.push_back(json);

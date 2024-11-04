@@ -1,9 +1,9 @@
 #include "chatwindowdelegate.h"
 
-ChatWindowDelegate::ChatWindowDelegate(QObject *parent)
+ChatWindowDelegate::ChatWindowDelegate(QObject *parent,int type)
     : QStyledItemDelegate{parent}
 {
-
+    this->type=type;
 }
 
 void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -29,7 +29,7 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
         //设置绘图区域
         QRectF timeRect=QRect(rect.x(),rect.y(),rect.width(),timeHeight);
-        QRectF bubbleRect,textRect;
+        QRectF bubbleRect,textRect,nameRect;
         QRect headPhotoRect;
         QPolygon triangle;
         int bubbleWidth=getBubbleWidth(option,index);
@@ -74,7 +74,10 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         if(message.account==Protocol::getUserAccount())
         {
             headPhotoRect=QRect(rect.right()-space-iconWidth,timeRect.bottom()+itemSpace,iconWidth,iconWidth);
-            bubbleRect=QRectF(headPhotoRect.left()-triWidth-bubbleWidth,headPhotoRect.top(),bubbleWidth,bubbleSpace*2+textRows*textHeight);
+            nameRect=QRect(space+triWidth+iconWidth,headPhotoRect.top(),option.rect.width()-(space+triWidth+iconWidth)*2,0);
+            if(type)
+                nameRect.setHeight(nameHeight);
+            bubbleRect=QRectF(headPhotoRect.left()-triWidth-bubbleWidth,nameRect.bottom(),bubbleWidth,bubbleSpace*2+textRows*textHeight);
             QPoint point(bubbleRect.right(),bubbleRect.top()+bubbleSpace);
             triangle<<point<<QPoint(point.x(),point.y()+7)<<QPoint(point.x()+7,point.y()-3);
             painter->setBrush(QColor(18,183,245));
@@ -82,12 +85,28 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         else
         {
             headPhotoRect=QRect(rect.left()+space,timeRect.bottom()+itemSpace,iconWidth,iconWidth);
-            bubbleRect=QRectF(headPhotoRect.right()+triWidth,headPhotoRect.top(),bubbleWidth,bubbleSpace*2+textRows*textHeight);
+            nameRect=QRect(space+triWidth+iconWidth,headPhotoRect.top(),option.rect.width()-(space+triWidth+iconWidth)*2,0);
+            if(type)
+                nameRect.setHeight(nameHeight);
+            bubbleRect=QRectF(headPhotoRect.right()+triWidth,nameRect.bottom(),bubbleWidth,bubbleSpace*2+textRows*textHeight);
             QPoint point(bubbleRect.left(),bubbleRect.top()+bubbleSpace);
             triangle<<point<<QPoint(point.x(),point.y()+7)<<QPoint(point.x()-7,point.y()-3);
             painter->setBrush(QColor(229,229,229));
         }
         textRect=QRect(bubbleRect.left()+bubbleSpace,bubbleRect.top()+bubbleSpace,bubbleRect.width()-2*bubbleSpace,textHeight);
+
+        //如果是群聊要绘制名字
+        if(type)
+        {
+            if(message.account==Protocol::getUserAccount())
+            {
+                painter->drawText(nameRect,Qt::AlignRight|Qt::AlignVCenter,message.userName);
+            }
+            else
+            {
+                painter->drawText(nameRect,Qt::AlignLeft|Qt::AlignVCenter,message.userName);
+            }
+        }
 
         //绘制头像
         str=message.headPhoto;
@@ -166,7 +185,7 @@ void ChatWindowDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     }
 }
 
-QWidget *ChatWindowDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* ChatWindowDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return nullptr;
 }
@@ -216,6 +235,8 @@ int ChatWindowDelegate::getItemHeight(const QStyleOptionViewItem &option, const 
         totalHeight+=timeHeight;
     }
     totalHeight+=getTextRows(option,index)*textHeight;
+    if(type)//群聊要加上名字高度
+        totalHeight+=nameHeight;
     return totalHeight;
 }
 

@@ -9,8 +9,12 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    addwindow.cpp \
     chatwindow.cpp \
     chatwindowdelegate.cpp \
+    creategroupwindow.cpp \
+    dynamicdelegate.cpp \
+    editdynamicwindow.cpp \
     frienditem.cpp \
     login.cpp \
     main.cpp \
@@ -19,11 +23,16 @@ SOURCES += \
     personal.cpp \
     protocol.cpp \
     register.cpp \
+    searchwindow.cpp \
     tcpthread.cpp
 
 HEADERS += \
+    addwindow.h \
     chatwindow.h \
     chatwindowdelegate.h \
+    creategroupwindow.h \
+    dynamicdelegate.h \
+    editdynamicwindow.h \
     frienditem.h \
     login.h \
     maininterface.h \
@@ -31,15 +40,20 @@ HEADERS += \
     personal.h \
     protocol.h \
     register.h \
+    searchwindow.h \
     tcpthread.h
 
 FORMS += \
+    addwindow.ui \
     chatwindow.ui \
+    creategroupwindow.ui \
+    editdynamicwindow.ui \
     frienditem.ui \
     login.ui \
     maininterface.ui \
     personal.ui \
-    register.ui
+    register.ui \
+    searchwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

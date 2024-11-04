@@ -113,6 +113,16 @@ void Protocol::initUserInfo(QJsonObject json)
     profession=json.value("profession").toString();//专业
 }
 
+void Protocol::setLastLoginTime(qint64 lastLoginTime_temp)
+{
+    lastLoginTime=lastLoginTime_temp;
+}
+
+void Protocol::setLoginTime(qint64 loginTime_temp)
+{
+    loginTime=loginTime_temp;
+}
+
 QString Protocol::getUserPath()
 {
     return loginUserPath;

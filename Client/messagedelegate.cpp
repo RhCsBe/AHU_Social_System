@@ -1,9 +1,9 @@
 #include "messagedelegate.h"
 
-MessageDelegate::MessageDelegate(QObject *parent)
+MessageDelegate::MessageDelegate(QObject *parent,MessageDelegateType type)
     : QStyledItemDelegate{parent}
 {
-
+    this->type=type;
 }
 
 void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -115,7 +115,9 @@ void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         {
             str=time.date().toString("M-d");
         }
-        painter->drawText(timeRect,Qt::AlignRight,str);
+        //只有消息类型才需要绘制时间
+        if(type==MessageType)
+            painter->drawText(timeRect,Qt::AlignRight,str);
 
         //绘制消息总数
         if(itemData.sum>0)

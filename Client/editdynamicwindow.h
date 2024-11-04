@@ -1,26 +1,24 @@
-#ifndef REGISTER_H
-#define REGISTER_H
+#ifndef EDITDYNAMICWINDOW_H
+#define EDITDYNAMICWINDOW_H
 
 #include <QWidget>
 #include "protocol.h"
-#include <QPalette>
-#include <QMouseEvent>
-#include "ElaMessageBar.h"
+#include <QGraphicsDropShadowEffect>
 #include <QScreen>
+#include <QMouseEvent>
+#include <ElaMessageBar.h>
 
 namespace Ui {
-class Register;
+class EditDynamicWindow;
 }
 
-class Register : public QWidget
+class EditDynamicWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Register(QWidget *parent = nullptr);
-    ~Register();
-
-    //一些初始化操作
+    explicit EditDynamicWindow(QWidget *parent = nullptr);
+    ~EditDynamicWindow();
     void setStyle();
     void setConnect();
 
@@ -30,18 +28,14 @@ public:
     void mouseMoveEvent(QMouseEvent* event);//重写鼠标移动事件
     QPoint moveTo(QPoint point);//越界判断并转换
 
-    //数据检测
-    bool matchRegExp();//前端正则匹配
-    bool judgeMessage();//判断数据是否完整且符合要求
-
-    //注册结果
-    void regiterResult(int result);
+    void publish();
 
 signals:
-    void userRegister(QString account,QString message,QString messageType);
+    void sendDynamic(QString message);
 
 private:
-    Ui::Register *ui;
+    Ui::EditDynamicWindow *ui;
+
     //界面拖拽
     bool pressed=false;//鼠标点击信号
     QPoint pressPoint;//鼠标点击初始位置
@@ -49,4 +43,4 @@ private:
     int screenHeight=0;
 };
 
-#endif // REGISTER_H
+#endif // EDITDYNAMICWINDOW_H

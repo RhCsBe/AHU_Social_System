@@ -18,8 +18,14 @@ Login::~Login()
 
 void Login::setStyle()
 {
+    //获取屏幕宽高
+    QRect rect=QGuiApplication::primaryScreen()->geometry();
+    screenWidth=rect.width();
+    screenHeight=rect.height();
+
     //设置登录按键的颜色
     ui->login->setRole(Material::Primary);
+    ui->login->setOverlayStyle(Material::TintedOverlay);
 
     //设置两个输入框的文字
     ui->account->setLabel("学号/工号");
@@ -29,6 +35,15 @@ void Login::setStyle()
     ui->widget->setStyleSheet("#widget{border:none;background-color:white;}");
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     //setAttribute(Qt::WA_TranslucentBackground);
+
+    //设置具体阴影
+    QGraphicsDropShadowEffect *shadow_effect = new QGraphicsDropShadowEffect(ui->frame);
+    shadow_effect->setOffset(0, 0);
+    //阴影颜色
+    shadow_effect->setColor(QColor(238, 78, 119, 127));
+    //阴影半径
+    shadow_effect->setBlurRadius(22);
+    ui->frame->setGraphicsEffect(shadow_effect);
 
     //设置图片资源
     ui->close_btn->setIcon(QIcon("://photo/close2.png"));
@@ -322,8 +337,21 @@ void Login::mouseMoveEvent(QMouseEvent *event)
     //检查按压信号，然后移动对应距离
     if(pressed)
     {
-        move(event->globalPos()- pressPoint);
+        this->move(moveTo(event->globalPos()-pressPoint));
     }
+}
+
+QPoint Login::moveTo(QPoint point)
+{
+    if(point.x()<3)
+        point.setX(3);
+    if(point.y()<0)
+        point.setY(0);
+    if(point.x()+this->size().width()>screenWidth-3)
+        point.setX(screenWidth-3-this->size().width());
+    if(point.y()+this->size().height()>screenHeight-3)
+        point.setY(screenHeight-3-this->size().height());
+    return point;
 }
 
 bool Login::matchRegExp()
@@ -343,11 +371,16 @@ void Login::registerResult(int result)
         registerWindow->regiterResult(result);
 }
 
-void Login::loginResult(bool result)
+void Login::loginResult(int result)
 {
-    if(!result)
+    //-1——登录失败，0——重复登录，1——登录成功
+    if(result==-1)
     {
         ElaMessageBar::error(ElaMessageBarType::BottomRight,"error","账号或密码错误",3000,this);
+    }
+    else
+    {
+        ElaMessageBar::information(ElaMessageBarType::BottomRight,"information","该账号已登录，请勿重复登录",3000,this);
     }
 }
 

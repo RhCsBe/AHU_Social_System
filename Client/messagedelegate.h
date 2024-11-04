@@ -7,11 +7,16 @@
 #include <QDateTime>
 #include <QFontMetrics>
 
+enum MessageDelegateType{
+    MessageType=0,
+    RelationType
+};
+
 class MessageDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit MessageDelegate(QObject *parent = nullptr);
+    explicit MessageDelegate(QObject *parent = nullptr,MessageDelegateType=MessageType);
 
     //重写默认代理的绘图事件
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -29,6 +34,9 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
+
+    int type=MessageType;
+
     int headRadius=28;
     int sumRadius=11;
 

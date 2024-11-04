@@ -17,5 +17,17 @@
         <file>photo/background5.jfif</file>
         <file>photo/background6.jfif</file>
         <file>photo/AHU3.jfif</file>
+        <file>photo/search.jfif</file>
+        <file>photo/search2.jfif</file>
+        <file>photo/addfriend2.jfif</file>
+        <file>photo/addfriend3.jfif</file>
+        <file>photo/addfriend4.jfif</file>
+        <file>photo/addfriend5.jfif</file>
+        <file>photo/addFriend6.jfif</file>
+        <file>photo/dynamic.jfif</file>
+        <file>photo/dynamic2.jfif</file>
+        <file>photo/createGroup.jfif</file>
+        <file>photo/createGroup2.jfif</file>
+        <file>photo/createGroup3.jfif</file>
     </qresource>
 </RCC>

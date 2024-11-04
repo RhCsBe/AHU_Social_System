@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddWindow</class>
+ <widget class="QWidget" name="AddWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>516</width>
+    <height>556</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="styleSheet">
+      <string notr="true">#frame{
+background-color: rgb(255, 255, 255);
+border-radius:10px;
+border:1px solid rgb(100, 169,139);
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QWidget" name="head" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>510</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#head{
+background:rgb(0,188,212);
+}</string>
+      </property>
+      <widget class="QToolButton" name="close_btn">
+       <property name="geometry">
+        <rect>
+         <x>469</x>
+         <y>2</y>
+         <width>41</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolButton:hover 
+{
+	background-color:rgb(255, 0, 0);
+}
+QToolButton:pressed
+{
+	background-color:rgb(170, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="min_btn">
+       <property name="geometry">
+        <rect>
+         <x>428</x>
+         <y>2</y>
+         <width>41</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolButton:hover
+{
+	background-color:rgba(200, 200, 200,85);
+}
+QToolButton:pressed
+{
+	background-color:rgba(220,220,220,85);
+}</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QtMaterialTabs" name="navigate" native="true">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>0</y>
+         <width>231</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#navigate{
+background:rgb(255,0,0);
+}</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="buttom" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>80</y>
+        <width>510</width>
+        <height>470</height>
+       </rect>
+      </property>
+      <widget class="QStackedWidget" name="view_stack">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>510</width>
+         <height>470</height>
+        </rect>
+       </property>
+       <widget class="QWidget" name="add_friend_page">
+        <widget class="QListView" name="add_friend_list">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>451</width>
+           <height>361</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QtMaterialFlatButton" name="agree_friend_btn">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>400</y>
+           <width>161</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>同意</string>
+         </property>
+        </widget>
+        <widget class="QtMaterialFlatButton" name="delete_friend_btn">
+         <property name="geometry">
+          <rect>
+           <x>290</x>
+           <y>400</y>
+           <width>161</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>删除</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="join_group_page">
+        <widget class="QtMaterialFlatButton" name="delete_group_btn">
+         <property name="geometry">
+          <rect>
+           <x>290</x>
+           <y>400</y>
+           <width>161</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>删除</string>
+         </property>
+        </widget>
+        <widget class="QtMaterialFlatButton" name="agree_group_btn">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>400</y>
+           <width>161</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>同意</string>
+         </property>
+        </widget>
+        <widget class="QListView" name="join_group_list">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>451</width>
+           <height>361</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtMaterialTabs</class>
+   <extends>QWidget</extends>
+   <header location="global">qtmaterialtabs.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtMaterialFlatButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">qtmaterialflatbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

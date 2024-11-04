@@ -26,16 +26,28 @@ enum InfoType
     Registration = 1125,
     FindPassword,
     LoginAccount,
-    SearchFriend,
     AddFriend,
+    JoinGroup,
     ChangeOnlineStatus,
     SendMessage,
-    AskForData,
+    SendDynamic,
     UserChangeData,
     UpdateHeadPhoto,
+    UpdateUserData,
+    UpdateFriend,
+    UpdateGroup,
     SendFileToFriend,
     AllHeadPhoto,
-    HistoryMessage
+    HistoryMessage,
+    HistoryDynamic,
+    SearchUser,
+    SearchGroup,
+    AskForUserData,
+    AskForGroupData,
+    Reconnection,
+    CreateGroup,
+    ModifyUserData,
+    ModifyGroupData
 };
 
 //保存用户资料编号

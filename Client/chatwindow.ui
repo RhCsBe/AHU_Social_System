@@ -96,6 +96,9 @@ background-color: qlineargradient(x1:1,y1:0,x2:0,y2:0,stop:0  #29bdd9,stop:1 #27
        <string notr="true">QPushButton{
 border:none;
 color:white;
+}
+#user_name:hover{
+color:grey;
 }</string>
       </property>
       <property name="text">

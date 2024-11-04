@@ -17,6 +17,11 @@ Register::~Register()
 
 void Register::setStyle()
 {
+    //获取屏幕宽高
+    QRect rect=QGuiApplication::primaryScreen()->geometry();
+    screenWidth=rect.width();
+    screenHeight=rect.height();
+
     //QtDesign设置的尺寸不一定是真是尺寸，所以要在这重新设置ElaComboBox的高度
     ui->identity_box->setMinimumHeight(41);
     ui->profession_box->setMinimumHeight(41);
@@ -28,6 +33,7 @@ void Register::setStyle()
     //设置登录按键的颜色
     ui->register_btn->setRole(Material::Primary);
     ui->register_btn->setBackgroundMode(Qt::OpaqueMode);
+    ui->register_btn->setOverlayStyle(Material::TintedOverlay);
 
     //设置下部主体的背景色以及整体的无边框和背景透明以及窗口显示在最上层
     //ui->widget->setStyleSheet("#widget{border:none;background-color:white;}");
@@ -138,8 +144,21 @@ void Register::mouseMoveEvent(QMouseEvent *event)
     //检查按压信号，然后移动对应距离
     if(pressed)
     {
-        move(event->globalPos()- pressPoint);
+        this->move(moveTo(event->globalPos()-pressPoint));
     }
+}
+
+QPoint Register::moveTo(QPoint point)
+{
+    if(point.x()<3)
+        point.setX(3);
+    if(point.y()<0)
+        point.setY(0);
+    if(point.x()+this->size().width()>screenWidth-3)
+        point.setX(screenWidth-3-this->size().width());
+    if(point.y()+this->size().height()>screenHeight-3)
+        point.setY(screenHeight-3-this->size().height());
+    return point;
 }
 
 bool Register::matchRegExp()

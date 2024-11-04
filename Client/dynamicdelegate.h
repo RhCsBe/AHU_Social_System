@@ -1,17 +1,15 @@
-#ifndef CHATWINDOWDELEGATE_H
-#define CHATWINDOWDELEGATE_H
+#ifndef DYNAMICDELEGATE_H
+#define DYNAMICDELEGATE_H
 
 #include <QStyledItemDelegate>
 #include <QObject>
 #include "protocol.h"
-#include <algorithm>
-#include <cmath>
 
-class ChatWindowDelegate : public QStyledItemDelegate
+class DynamicDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit ChatWindowDelegate(QObject *parent = nullptr,int type=0);
+    explicit DynamicDelegate(QObject *parent = nullptr);
 
     //重写默认代理的绘图事件
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -27,23 +25,24 @@ public:
     //void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-
-    int getBubbleWidth(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     int getItemHeight(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     int getTextRows(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     int getValidStringLength(QString str,int pos,double width) const;//获取当前有效字符串长度
 
 private:
-    int space=15;//侧边留白
-    int iconWidth=50;//头像宽度
-    int triWidth=15;//三角形宽度
-    int bubbleSpace=10;//气泡留白
-    int timeHeight=14;//时间高度
-    int itemSpace=8;//消息留白（上下间隔一半）
-    int textHeight=25;//单行文本高度(包含了文本的上下间隔）
-    int fontSpace=7;//文字上下间隔（文字大小=textHeight-2*fontSpace)
-    int nameHeight=22;//名字高度
-    int type=0;//代理类型，默认单聊，0是单聊，1是群聊
+    int topSpace=15;//顶部间隔
+    int bottomSapce=15;//底部间隔
+    int leftSpace=15;//左边间隔
+    int rightSapce=20;//右边间隔
+    int textFontSize=12;//内容字体大小
+    int nameFontSize=10;//姓名字体大小
+    int timeFontSize=9;//时间字体大小
+    int headPhotoSize=50;//头像大小
+    int timeHeight=20;//时间高度
+    int textHeight=25;//单行文本高度
+    int nameHeight=25;//名字高度
+    int centerSpace=8;//头像和内容间隔
+    int headPhotoToNameSpace=10;//头像和用户名间隔
 };
 
-#endif // CHATWINDOWDELEGATE_H
+#endif // DYNAMICDELEGATE_H

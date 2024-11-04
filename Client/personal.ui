@@ -43,115 +43,160 @@
        <height>16777215</height>
       </size>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
+     <widget class="QWidget" name="left_top" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>440</width>
+        <height>448</height>
+       </rect>
       </property>
-      <property name="leftMargin">
-       <number>0</number>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="background">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="left_bottom" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>448</y>
+        <width>440</width>
+        <height>200</height>
+       </rect>
       </property>
-      <property name="topMargin">
-       <number>0</number>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>200</height>
+       </size>
       </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QWidget" name="left_top" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="background">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" name="left_bottom" native="true">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>200</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">#left_bottom{
+      <property name="styleSheet">
+       <string notr="true">#left_bottom{
 background:#322625;
 }</string>
-        </property>
-        <widget class="QLabel" name="user_name">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>30</y>
-           <width>231</width>
-           <height>70</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>17</pointsize>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">#user_name{
+      </property>
+      <widget class="QLabel" name="user_name">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>30</y>
+         <width>231</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>17</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#user_name{
 color:white;
 }</string>
-         </property>
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-        <widget class="QtMaterialRaisedButton" name="function_button">
-         <property name="geometry">
-          <rect>
-           <x>50</x>
-           <y>120</y>
-           <width>331</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
-        <widget class="QToolButton" name="headPhoto">
-         <property name="geometry">
-          <rect>
-           <x>50</x>
-           <y>30</y>
-           <width>75</width>
-           <height>75</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+       </property>
+       <property name="text">
+        <string>RhCsBe</string>
+       </property>
+      </widget>
+      <widget class="QtMaterialRaisedButton" name="function_button">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>120</y>
+         <width>331</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="headPhoto">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>30</y>
+         <width>76</width>
+         <height>76</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolButton{
+border-radius:38px;
+background:white;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="ElaLineEdit" name="signature">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>80</y>
+         <width>271</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#signature{
+background:transparent;
+color:white;
+}
+QLineEdit::placeholder {color: red;}</string>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+       <property name="placeholderText">
+        <string>编辑个性签名</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
    <item>
@@ -262,8 +307,11 @@ QToolButton:pressed
            <height>16777215</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="user_page">
           <property name="styleSheet">
@@ -303,6 +351,21 @@ background:transparent;
              <pointsize>11</pointsize>
             </font>
            </property>
+           <item>
+            <property name="text">
+             <string>计算机科学与技术</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>软件工程</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>信息安全</string>
+            </property>
+           </item>
           </widget>
           <widget class="ElaCalendarPicker" name="birthday_calendar">
            <property name="geometry">
@@ -341,6 +404,9 @@ background:transparent;
            </property>
           </widget>
           <widget class="QLabel" name="account">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="geometry">
             <rect>
              <x>80</x>
@@ -353,6 +419,11 @@ background:transparent;
             <font>
              <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLabel:disabled{
+background:#fdfdfd;
+}</string>
            </property>
            <property name="text">
             <string>账号：</string>
@@ -425,6 +496,9 @@ background:transparent;
            </property>
           </widget>
           <widget class="ElaComboBox" name="sex_box">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="geometry">
             <rect>
              <x>140</x>
@@ -437,6 +511,9 @@ background:transparent;
             <font>
              <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">

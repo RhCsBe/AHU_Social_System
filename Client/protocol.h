@@ -16,12 +16,12 @@
 #define DefaultPixmap ":/photo/AHU1.png"
 
 typedef struct{
-    QString account;
-    QString userName;
-    QString headPhoto;
-    QString message;
-    qint64 time;
-    int sum;
+    QString account="";
+    QString userName="";
+    QString headPhoto="";
+    QString message="";
+    qint64 time=0;
+    int sum=0;
 } MessageItem;
 Q_DECLARE_METATYPE(MessageItem)//注册自定义结构体
 
@@ -40,16 +40,28 @@ enum InfoType
     Registration = 1125,
     FindPassword,
     LoginAccount,
-    SearchFriend,
     AddFriend,
+    JoinGroup,
     ChangeOnlineStatus,
     SendMessage,
-    AskForData,
+    SendDynamic,
     UserChangeData,
     UpdateHeadPhoto,
+    UpdateUserData,
+    UpdateFriend,
+    UpdateGroup,
     SendFileToFriend,
     AllHeadPhoto,
-    HistoryMessage
+    HistoryMessage,
+    HistoryDynamic,
+    SearchUser,
+    SearchGroup,
+    AskForUserData,
+    AskForGroupData,
+    Reconnection,
+    CreateGroup,
+    ModifyUserData,
+    ModifyGroupData
 };
 
 //保存用户资料编号
@@ -79,6 +91,8 @@ public:
     //设置用户信息
     static void initLoginUserInfo(QString account, QString pwd,qint64 lastLoginTime_temp, qint64 loginTime_temp); //设置用户登录时数据
     static void initUserInfo(QJsonObject json);//设置当前用户信息
+    static void setLastLoginTime(qint64 lastLoginTime_temp);//设置上次登录事件
+    static void setLoginTime(qint64 loginTime_temp);//设置登录事件
 
     /* 登录用户数据文件夹 */
     static QString getUserPath(); //返回登录用户文件夹位置

@@ -25,6 +25,9 @@
 #include <QDateTime>
 #include <ElaMessageBar.h>
 #include "register.h"
+#include <QGraphicsDropShadowEffect>
+#include <QColor>
+#include <QScreen>
 
 namespace Ui {
 class Login;
@@ -48,9 +51,10 @@ public:
     bool eventFilter(QObject *watched, QEvent *event);//重写事件过滤函数
 
     //实现拖拽效果
-    void mousePressEvent(QMouseEvent *event);//重写鼠标按压事件
-    void mouseReleaseEvent(QMouseEvent *event);//重写鼠标释放事件
-    void mouseMoveEvent(QMouseEvent *event);//重写鼠标移动事件
+    void mousePressEvent(QMouseEvent* event);//重写鼠标按压事件
+    void mouseReleaseEvent(QMouseEvent* event);//重写鼠标释放事件
+    void mouseMoveEvent(QMouseEvent* event);//重写鼠标移动事件
+    QPoint moveTo(QPoint point);//越界判断并转换
 
     //前端正则匹配
     bool matchRegExp();
@@ -59,7 +63,7 @@ public:
     void registerResult(int result);
 
     //登录相关
-    void loginResult(bool result);
+    void loginResult(int result);
 
 signals:
     void sendLogin(QString account,QString password);
@@ -67,8 +71,13 @@ signals:
 
 private:
     Ui::Login *ui;
+
+    //界面拖拽
     bool pressed=false;//鼠标点击信号
     QPoint pressPoint;//鼠标点击初始位置
+    int screenWidth=0;
+    int screenHeight=0;
+
     QHash<QString,QJsonObject> userList;//登录用户信息表
     bool down=false;
     ElaComboBox* box=nullptr;

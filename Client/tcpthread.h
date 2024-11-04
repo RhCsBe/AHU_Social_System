@@ -32,8 +32,9 @@ public:
 
     //数据发送
     void sendToServer(QByteArray jsonData, QString fileName, int type, int fileNums, QString RecvAccount);
-    void sendFile(QString fileName,QString sendToAccount,int type);
-    void sendJson(QByteArray jsonData);
+    //发送普通文件
+    void SendFile(QTcpSocket* socket, QString fileName, QString senderAccount, int type);
+    void sendJson(QByteArray jsonData);//发送json文件
 
     //数据接收
     void getData();
@@ -45,15 +46,23 @@ public:
     void parseMessage(QByteArray dataArray);
 
     //数据转换
-    void getJsonData(int type, QString account = "", QString targetAccount = "", QString message = "",QString messageType="");
+    void getJsonData(int type, QString account = "", QString targetAccount = "", QString message = "",QString messageType="",QString file="");
 
 signals:
-    void registerResult(int result);
-    void loginSuccess(bool result);
-    void myInformation(QString str);
-    void getMessage(QString account,QJsonObject json);
-    void getHistoryMessage();
-
+    void registerResult(int result);//注册结果
+    void loginSuccess(int result);//登录结果
+    void myInformation(QString str);//显示字符串内容
+    void getMessage(QString account,QJsonObject json);//收到信息
+    void getHistoryMessage();//收到历史信息
+    void getHistoryDynamic();//收到历史动态
+    void getSearchOrAskData(int type);//搜索或请求信息
+    void reconnection();//断线重连
+    void addFriend(QJsonObject json);//收到好友申请
+    void joinGroup(QJsonObject json);//收到加群申请
+    void getDynamic(QJsonObject json);//收到动态信息
+    void updateFriend();//通知主界面friend文件发生变化
+    void updateGroup();//通知主界面group文件发生变化
+    void updateUserData();//通知主界面用户信息发生修改
 
 private:
     //套接字、ip、端口、缓冲区

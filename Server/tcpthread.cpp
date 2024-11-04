@@ -16,7 +16,7 @@ void TcpThread::initServer()
             QByteArray* byteArray=new QByteArray();
             connect(socket,&QTcpSocket::readyRead,this,&TcpThread::getData,Qt::QueuedConnection);
             QString key=socket->peerAddress().toString()+" "+QString::number(socket->peerPort());
-            qDebug()<<key;
+            //qDebug()<<key;
             allSocket.insert(key,socket);//存储socket指针
             ipAndPort.insert(socket,key);//记录ip和端口，后面有用
             allDateBuffer.insert(key,byteArray);
@@ -25,8 +25,12 @@ void TcpThread::initServer()
                 //QString key=static_cast<QTcpSocket*>(sender())->peerAddress().toString()+" "+QString::number(static_cast<QTcpSocket*>(sender())->peerPort());
                 //因为lambda表达式在捕获时，socket局部变量已经失效，所以在这要获取sender并转成QTcpSocket*
                 QTcpSocket* socket=static_cast<QTcpSocket*>(sender());
+//                if(!socket)
+//                    qDebug()<<"捕获一个空对象";
+//                else
+//                    qDebug()<<"捕获一个真实对象";
                 QString key=ipAndPort.value(socket);
-                qDebug()<<key;
+                //qDebug()<<key;
                 ipAndPort.remove(socket);
                 allSocket.remove(key);
                 if(allToOnline.contains(key))
@@ -96,11 +100,37 @@ void TcpThread::sendToClient(QString key, int type, QString account, QString tar
     QTcpSocket* socket=nullptr;
     switch(type)
     {
+        case UpdateUserData://更新自己的数据
+        case Reconnection://断线重连
         case Registration://用户注册
         case LoginAccount://用户登录
-        case AllHeadPhoto://所有用户头像
+        case SearchUser://搜索用户
+        case SearchGroup://搜索群聊
+        case AskForUserData://请求用户信息
+        case AskForGroupData://请求群聊信息
         {
             socket=allSocket[key];
+            if(fileName!="")
+            {
+                QStringList list=fileName.split("?");
+                for(auto i:list)
+                {
+                    //qDebug()<<i;
+                    SendFile(socket,i,"",type);
+                }
+            }
+            break;
+        }
+        case AllHeadPhoto://所有用户头像
+        {
+            if(targetAccount.isEmpty())
+            {
+                socket=allSocket[key];
+            }
+            else
+            {
+                socket=onlineSocket[targetAccount];
+            }
             if(fileName!="")
             {
                 QStringList list=fileName.split("?");
@@ -112,8 +142,12 @@ void TcpThread::sendToClient(QString key, int type, QString account, QString tar
             }
             break;
         }
-
+        case SendDynamic://发布动态
         case SendMessage://发送信息
+        case AddFriend://添加好友
+        case JoinGroup://加入群聊
+        case UpdateFriend://更新friend文件
+        case UpdateGroup://更新group文件
         {
             socket=onlineSocket[targetAccount];
             qDebug()<<"target:"<<targetAccount<<"\t"<<socket;
@@ -128,6 +162,7 @@ void TcpThread::sendToClient(QString key, int type, QString account, QString tar
             }
             break;
         }
+        case HistoryDynamic://发送历史动态文件
         case HistoryMessage://发送历史消息文件
         {
             socket=onlineSocket[targetAccount];
@@ -150,9 +185,9 @@ void TcpThread::sendToClient(QString key, int type, QString account, QString tar
 
     if(jsonData.size()>0)
     {
-        qDebug()<<"发送json数据";
+        //qDebug()<<"发送json数据";
         sendJson(socket,jsonData);
-        qDebug()<<"json发送完毕";
+        //qDebug()<<"json发送完毕";
     }
 }
 

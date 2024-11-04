@@ -159,7 +159,7 @@ color:yellow;
     <string notr="true">QLineEdit { background: transparent; }</string>
    </property>
    <property name="text">
-    <string>E02114000</string>
+    <string/>
    </property>
    <property name="frame">
     <bool>false</bool>
@@ -184,7 +184,7 @@ color:yellow;
     <string notr="true">QLineEdit { background: transparent; }</string>
    </property>
    <property name="text">
-    <string>某某某</string>
+    <string/>
    </property>
    <property name="frame">
     <bool>false</bool>
@@ -368,7 +368,7 @@ color:yellow;
     <string notr="true">QLineEdit { background: transparent; }</string>
    </property>
    <property name="text">
-    <string>123456789</string>
+    <string/>
    </property>
    <property name="frame">
     <bool>false</bool>
@@ -396,7 +396,7 @@ color:yellow;
     <string notr="true">QLineEdit { background: transparent; }</string>
    </property>
    <property name="text">
-    <string>123456789</string>
+    <string/>
    </property>
    <property name="frame">
     <bool>false</bool>
@@ -530,14 +530,14 @@ QToolButton:pressed
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ElaComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">elacombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>QtMaterialFlatButton</class>
    <extends>QPushButton</extends>
    <header location="global">qtmaterialflatbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">elacombobox.h</header>
   </customwidget>
   <customwidget>
    <class>ElaLineEdit</class>
