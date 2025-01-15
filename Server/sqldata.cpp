@@ -1076,7 +1076,7 @@ void SqlData::userRegister(QString account, QString password)
             str=QString::asprintf("INSERT INTO %1 (account, pwd, onlinestatus, userName, signature, sex, age,"
                                     "birthday, location, blood_type, college, profession, update_time,"
                                     "login_time, head_photo)VALUES ('%2', '%3', 0, '%4', '', '%5', 18,"
-                                    "'2003-09-01', '中国', '未知', '%6', '%7', 0, 0,'');").arg(table_2)
+                                    "'2003/8/1', '中国', '未知', '%6', '%7', 0, 0,'');").arg(table_2)
                                     .arg(account).arg(password).arg(name).arg(sex).arg(college)
                                     .arg(profession);
         }
@@ -1085,7 +1085,7 @@ void SqlData::userRegister(QString account, QString password)
             str=QString::asprintf("INSERT INTO %1 (account, pwd, onlinestatus, userName, signature, sex, age,"
                                     "birthday, location, blood_type, college, update_time,"
                                     "login_time, head_photo)VALUES ('%2', '%3', 0, '%4', '', '%5', 18,"
-                                    "'2003-09-01', '中国', '未知', '%6', 0, 0,'');").arg(table_2)
+                                    "'1990/9/1', '中国', '未知', '%6', 0, 0,'');").arg(table_2)
                               .arg(account).arg(password).arg(name).arg(sex).arg(college);
         }
         //执行并输出结果

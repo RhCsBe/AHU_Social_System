@@ -1097,7 +1097,7 @@ void MainInterface::openChatWindow(QString account)
 void MainInterface::openPersonal(QString account)
 {
     Personal* personal=nullptr;
-
+    qDebug()<<"打开："<<account;
     if(!personalList.contains(account))
     {
         //该界面是自己或者好友或者加入的群聊

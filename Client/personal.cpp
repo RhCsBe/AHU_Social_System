@@ -71,10 +71,8 @@ void Personal::initPersonal(QJsonObject *user, QJsonArray *memberData, PersonalT
 
     //设置用户数据
     resetUserData();
-
     //根据Personal类型设置function按键
     setFunction(type);
-
     //根据用户类型设置一下对应样式
     QString account=user->value("account").toString();
     if(account[0]=='E')
@@ -329,7 +327,6 @@ void Personal::resetUserData()
     //用户信息复原
     if(account[0]=='E'||account[0]=='T')
     {
-
         ui->account_edit->setText(user->value("account").toString());
         ui->userName_edit->setText(user->value("userName").toString());
         ui->sex_box->setCurrentText(user->value("sex").toString());
